@@ -1,7 +1,7 @@
 package project.controller.admin;
 
 
-import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import project.entity.News;
 import project.service.NewsService;
 import project.util.KeyUtil;
@@ -11,7 +11,6 @@ import project.vo.PageVo;
 import project.vo.ResultVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
@@ -46,8 +45,7 @@ public class NewsController {
     public ResultVo insertNews(@RequestBody News news, HttpSession session){
         String username=(String) session.getAttribute("username");
         news.setId(KeyUtil.genUniqueKey()).setUsername(username);
-        Integer i = newsService.insertNews(news);
-        if (i == 1){
+        if (newsService.insertNews(news)){
             return new ResultVo(true, StatusCode.OK,"公告发布成功");
         }
         return new ResultVo(false,StatusCode.ERROR,"公告发布失败，请重新发布");
@@ -69,8 +67,7 @@ public class NewsController {
         }else {
             /**判断是否是本人或超级管理员*/
             if (news.getUsername().equals(username) || username.equals("admin")){
-                Integer i = newsService.delectNews(id);
-                if (i == 1){
+                if (newsService.deleteNews(id)){
                     return new ResultVo(true,StatusCode.OK,"删除成功");
                 }
                 return new ResultVo(false,StatusCode.ERROR,"删除失败");
@@ -130,8 +127,7 @@ public class NewsController {
     @PutMapping("/news/update")
     @ApiOperation(value = "修改公告", httpMethod = "PUT",response = ResultVo.class)
     public ResultVo updateNews (@RequestBody News news){
-        Integer i = newsService.updateNews(news);
-        if (i == 1){
+        if (newsService.updateNews(news)){
             return new ResultVo(true,StatusCode.OK,"修改成功");
         }
         return new ResultVo(false,StatusCode.ERROR,"修改失败");

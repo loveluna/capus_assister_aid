@@ -40,8 +40,7 @@ public class NoticesController {
     @PutMapping("/notices/look/{id}")
     @ApiOperation(value = "用户查看通知消息后设置已读",httpMethod = "PUT",response = ResultVo.class)
     public ResultVo LookNoticesById (@PathVariable("id") String id) {
-        Integer i = noticesService.updateNoticesById(id);
-        if (i == 1){
+        if (noticesService.updateNoticesById(id)){
             return new ResultVo(true, StatusCode.OK,"设置成功");
         }
         return new ResultVo(true, StatusCode.ERROR,"设置失败");
@@ -68,8 +67,7 @@ public class NoticesController {
     @ApiOperation(value = "取消通知标志",httpMethod = "PUT",response = ResultVo.class)
     public ResultVo CancelLatest (HttpSession session){
         String userid = (String) session.getAttribute("userid");
-        Integer i = noticesService.CancelLatest(userid);
-        if (i == 1){
+        if (noticesService.cancelLatest(userid)){
             return new ResultVo(true,StatusCode.OK,"设置成功");
         }
         return new ResultVo(true,StatusCode.ERROR,"设置失败");
@@ -86,7 +84,7 @@ public class NoticesController {
     @ApiOperation(value = "返回用户所有通知消息",httpMethod = "GET",response = LayuiPageVo.class)
     public LayuiPageVo queryallSold(int limit, int page, HttpSession session) {
         String userid = (String) session.getAttribute("userid");
-        List<Notices> noticesList = noticesService.queryAllNotices((page - 1) * limit, limit, userid);
+        List<Notices> noticesList = noticesService.queryAllNotices(userid,(page - 1) * limit, limit);
         Integer dataNumber = noticesService.queryNoticesCount(userid);
         return new LayuiPageVo("", 0,dataNumber,noticesList);
     }

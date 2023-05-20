@@ -1,8 +1,7 @@
 package project.mapper;
 
-import java.util.List;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import project.entity.UserPerm;
 
-public interface UserPermMapper {
-    /**查询用户的权限*/
-    List<String> LookPermsByUserid(Integer roleid);
+public interface UserPermMapper extends BaseMapper<UserPerm> {
 }

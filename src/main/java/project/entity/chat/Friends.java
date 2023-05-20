@@ -2,18 +2,19 @@ package project.entity.chat;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import project.entity.BaseEntity;
 
 import java.io.Serializable;
 import java.util.Date;
 
 
-@AllArgsConstructor//全参构造
-@NoArgsConstructor//无参构造
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Accessors(chain = true)//链式写法
-public class Friends implements Serializable {
+public class Friends extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

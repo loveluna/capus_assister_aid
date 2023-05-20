@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" th:href="@{/static/layui/css/layui.css}"/>
-    <link rel="stylesheet" type="text/css" th:href="@{/static/css/userInfo/relgoods.css}"/>
-    <script type="text/javascript" th:src="@{/static/layui/jquery.min.js}"></script>
-    <script type="text/javascript" th:src="@{/static/js/vue.js}"></script>
-    <script type="text/javascript" th:src="@{/static/js/userInfo/ckplayer.js}"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/userInfo/relgoods.css}"/>
+    <script type="text/javascript" th:src="@{/layui/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/vue.js}"></script>
+    <script type="text/javascript" th:src="@{/js/userInfo/ckplayer.js}"></script>
     <title>校园二手交易商城 | 发布商品</title>
     <script th:inline="javascript">
         var basePath = [[${#httpServletRequest.getScheme() + "://" + #httpServletRequest.getServerName() + ":" + #httpServletRequest.getServerPort() + #httpServletRequest.getContextPath()}]];
@@ -97,7 +97,7 @@
              :key="index" :id="'img'+index" @mouseover="mouseOver(index)" @mouseleave="mouseLeave(index)">
             <img :src="img.imgsrc" style="width:300px;height:200px;cursor: pointer"
                  @click="openimg(img.imgsrc)">
-            <img th:src="@{/static/images/close.png}" class="delete"
+            <img th:src="@{/images/close.png}" class="delete"
                  @click="delimage(index)" :id="'del'+index" style="cursor: pointer">
         </div>
     </div>
@@ -114,6 +114,6 @@
     </div>
 </form>
 </body>
-<script type="text/javascript" th:src="@{/static/layui/layui.js}"></script>
-<script type="text/javascript" th:src="@{/static/js/userInfo/relgoods.js}"></script>
+<script type="text/javascript" th:src="@{/layui/layui.js}"></script>
+<script type="text/javascript" th:src="@{/js/userInfo/relgoods.js}"></script>
 </html>

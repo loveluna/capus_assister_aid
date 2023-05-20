@@ -1,5 +1,7 @@
 package project.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
+import project.entity.News;
 import project.entity.Notices;
 import project.mapper.NoticesMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,34 +17,17 @@ import java.util.List;
  * </p>
  *
  */
-@Service
-@Transactional
-public class NoticesService {
-    @Resource
-    private NoticesMapper noticesMapper;
 
-    /**发出通知消息*/
-    public Integer insertNotices(Notices notices){
-        return noticesMapper.insertNotices(notices);
-    }
-    /**用户已读通知消息*/
-    public Integer updateNoticesById(String id){
-        return noticesMapper.updateNoticesById(id);
-    }
-    /**查询前10条通知*/
-    public List<Notices> queryNotices(String userid){
-        return noticesMapper.queryNotices(userid);
-    }
-    /**取消新通知标志*/
-    public Integer CancelLatest(String userid){
-        return noticesMapper.CancelLatest(userid);
-    }
-    /**分页查询用户所有通知消息*/
-    public List<Notices> queryAllNotices(Integer page, Integer count, String userid){
-        return noticesMapper.queryAllNotices(page,count,userid);
-    }
-    /**查询用户所有通知消息的数量*/
-    public Integer queryNoticesCount(String userid){
-        return noticesMapper.queryNoticesCount(userid);
-    }
+public interface NoticesService extends IService<Notices> {
+    boolean insertNotices(Notices notices);
+
+    boolean updateNoticesById(String id);
+
+    List<Notices> queryNotices(String userId);
+
+    boolean cancelLatest(String userId);
+
+    List<Notices> queryAllNotices(String userId, Integer page, Integer count);
+
+    Integer queryNoticesCount(String userId);
 }

@@ -2,19 +2,16 @@ package project.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
-@AllArgsConstructor//全参构造
-@NoArgsConstructor//无参构造
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Accessors(chain = true)//链式写法
-public class UserRole implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
+public class UserRole extends BaseEntity implements Serializable {
 	private String userid;
     /**
      * 1普通用户 2管理员 3超级管理员

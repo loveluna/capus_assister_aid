@@ -1,7 +1,10 @@
 package project.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
@@ -17,14 +20,10 @@ import java.util.List;
  *
  *
  */
-@AllArgsConstructor//全参构造
-@NoArgsConstructor//无参构造
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Accessors(chain = true)//链式写法
-public class Commodity implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
+public class Commodity extends BaseEntity implements Serializable {
     /**
      * 商品id
      */
@@ -56,10 +55,12 @@ public class Commodity implements Serializable {
     /**
      * 发布时间
      */
+    @TableField(fill = FieldFill.INSERT)
     private Date createtime;
     /**
      * 修改时间
      */
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updatetime;
     /**
      * 结束时间

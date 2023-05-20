@@ -21,12 +21,11 @@ import java.util.List;
 
 /**
  * <p>
- *  销售记录控制器
+ * 销售记录控制器
  * </p>
- *
  */
 @Controller
-@Api(value = "soldrecordController",tags = "售卖记录")
+@Api(value = "soldrecordController", tags = "售卖记录")
 public class SoldrecordController {
     @Resource
     private SoldrecordService soldrecordService;
@@ -35,16 +34,15 @@ public class SoldrecordController {
      * 删除售出记录
      * 1.前端传入需删除记录的id（id）
      * 2.判断是否是本人
-     * */
+     */
     @ResponseBody
     @PutMapping("/soldrecord/delect/{id}")
-    @ApiOperation(value = "删除售出记录",httpMethod = "PUT",response = ResultVo.class)
-    public ResultVo delectSold (@PathVariable("id") String id) {
-        Integer i = soldrecordService.deleteSold(id);
-        if (i == 1){
-            return new ResultVo(true, StatusCode.OK,"删除记录成功");
+    @ApiOperation(value = "删除售出记录", httpMethod = "PUT", response = ResultVo.class)
+    public ResultVo delectSold(@PathVariable("id") String id) {
+        if (soldrecordService.deleteSold(id)) {
+            return new ResultVo(true, StatusCode.OK, "删除记录成功");
         }
-        return new ResultVo(false, StatusCode.ERROR,"删除记录失败");
+        return new ResultVo(false, StatusCode.ERROR, "删除记录失败");
     }
 
     /**
@@ -54,16 +52,16 @@ public class SoldrecordController {
      */
     @ResponseBody
     @GetMapping("/soldrecord/lookuser")
-    @ApiOperation(value = "返回用户所有售出记录",httpMethod = "GET",response = LayuiPageVo.class)
+    @ApiOperation(value = "返回用户所有售出记录", httpMethod = "GET", response = LayuiPageVo.class)
     public LayuiPageVo LookUserSold(int limit, int page, HttpSession session) {
         String userid = (String) session.getAttribute("userid");
         //如果未登录，给一个假id
-        if(StringUtils.isEmpty(userid)){
+        if (StringUtils.isEmpty(userid)) {
             userid = "123456";
         }
-        List<Soldrecord> soldrecordList = soldrecordService.queryAllSoldrecord((page - 1) * limit, limit, userid);
+        List<Soldrecord> soldrecordList = soldrecordService.queryAllSoldrecord(userid, (page - 1) * limit, limit);
         Integer dataNumber = soldrecordService.querySoldCount(userid);
-        return new LayuiPageVo("",0,dataNumber,soldrecordList);
+        return new LayuiPageVo("", 0, dataNumber, soldrecordList);
     }
 
     /**
@@ -73,11 +71,11 @@ public class SoldrecordController {
      */
     @ResponseBody
     @GetMapping("/soldrecord/queryall")
-    @ApiOperation(value = "返回全部的售出记录",httpMethod = "PUT",response = LayuiPageVo.class)
+    @ApiOperation(value = "返回全部的售出记录", httpMethod = "PUT", response = LayuiPageVo.class)
     public LayuiPageVo queryAllSold(int limit, int page) {
-        List<Soldrecord> soldrecordList = soldrecordService.queryAllSoldrecord((page - 1) * limit, limit, null);
+        List<Soldrecord> soldrecordList = soldrecordService.queryAllSoldrecord(null, (page - 1) * limit, limit);
         Integer dataNumber = soldrecordService.querySoldCount(null);
-        return new LayuiPageVo("",0,dataNumber,soldrecordList);
+        return new LayuiPageVo("", 0, dataNumber, soldrecordList);
     }
 
 }

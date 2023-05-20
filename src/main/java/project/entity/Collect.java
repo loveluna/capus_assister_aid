@@ -1,9 +1,12 @@
 package project.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
@@ -17,15 +20,11 @@ import java.util.Date;
  *
 
  */
-@AllArgsConstructor//全参构造
-@NoArgsConstructor//无参构造
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Accessors(chain = true)//链式写法
 @ApiModel(value = "goods",description = "商品信息")
-public class Collect implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
+public class Collect extends BaseEntity implements Serializable {
     /**
      * 收藏id
      */
@@ -50,6 +49,7 @@ public class Collect implements Serializable {
      * 收藏时间
      */
     @ApiModelProperty(value = "收藏时间",name = "soldtime")
+    @TableField(fill = FieldFill.INSERT)
     private Date soldtime;
     /**
      * 0失效 1正常 2删除
@@ -77,5 +77,6 @@ public class Collect implements Serializable {
     /**
      * 收藏操作：收藏or取消收藏
      */
+    @TableField(exist = false)
     private Integer colloperate;
 }

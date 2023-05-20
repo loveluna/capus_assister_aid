@@ -1,12 +1,8 @@
 package project.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import project.entity.Commimages;
-import project.mapper.CommimagesMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -15,22 +11,11 @@ import java.util.List;
  * </p>
  *
  */
-@Service
-@Transactional
-public class CommimagesService {
-    @Resource
-    private CommimagesMapper commimagesMapper;
 
-    /**插入商品的其他图*/
-    public void InsertGoodImages(List<Commimages> list){
-        commimagesMapper.InsertGoodImages(list);
-    }
-    /**查询某个商品得其他图*/
-    public List<String> LookGoodImages(String commid){
-        return commimagesMapper.LookGoodImages(commid);
-    }
-    /**删除某个商品得其他图*/
-    public void DelGoodImages(String commid){
-        commimagesMapper.DelGoodImages(commid);
-    }
+public interface CommimagesService extends IService<Commimages> {
+    void insertGoodImages(List<Commimages> commimagesList);
+
+    List<String> findImagesByCommId(String commid);
+
+    void delGoodImages(String commid);
 }

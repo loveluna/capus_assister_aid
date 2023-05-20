@@ -60,7 +60,7 @@ public class ChatWebSocket {
         this.WebSocketsession = WebSocketsession;
         webSocketSet.put(param, this);//加入map中
         addOnlineCount();     //在线数加1 System.out.println("有新连接加入！当前在线人数为" + getOnlineCount());
-        mineService.UpdateUserInfo(new UserInfo().setUserid(userno).setStatus("online")); //更新用户的状态为在线
+        mineService.updateUserInfo(new UserInfo().setUserid(userno).setStatus("online")); //更新用户的状态为在线
     }
 
 
@@ -72,7 +72,7 @@ public class ChatWebSocket {
         if (!userno.equals("")) {
             webSocketSet.remove(userno); //从set中删除
             subOnlineCount();     //在线数减1  System.out.println("有一连接关闭！当前在线人数为" + getOnlineCount());
-            mineService.UpdateUserInfo(new UserInfo().setUserid(userno).setStatus("offline")); //更新用户的状态为离线
+            mineService.updateUserInfo(new UserInfo().setUserid(userno).setStatus("offline")); //更新用户的状态为离线
         }
     }
 
@@ -101,7 +101,7 @@ public class ChatWebSocket {
      */
     public void sendToUser(UserInfo message) {
         String reviceUserid = message.getToid();
-        chatMsgService.insertChatmsg(new ChatMsg().setMsgtype("0").setReciveuserid(reviceUserid).setSenduserid(message.getId()).setContent(message.getContent()));
+        chatMsgService.save(new ChatMsg().setMsgtype("0").setReciveuserid(reviceUserid).setSenduserid(message.getId()).setContent(message.getContent()));
         try {
             if (webSocketSet.get(reviceUserid) != null) {
                 webSocketSet.get(reviceUserid).sendMessage(JSONObject.toJSONString(message));//转成json形式发送出去

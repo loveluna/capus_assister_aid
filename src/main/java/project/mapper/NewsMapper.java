@@ -1,5 +1,7 @@
 package project.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import project.entity.Login;
 import project.entity.News;
 import org.apache.ibatis.annotations.Param;
 
@@ -12,21 +14,6 @@ import java.util.List;
  *
  *
  */
-public interface NewsMapper {
-    /**发布公告*/
-    Integer insertNews(News news);
-    /**删除公告*/
-    Integer delectNews(String id);
-    /**修改公告*/
-    Integer updateNews(News news);
-    /**查看公告详情*/
-    News queryNewsById(String id);
-    /**浏览量*/
-    void addNewsRednumber(String id);
-    /**查询前三条公告*/
-    List<News> queryNews();
-    /**分页展示公告信息*/
-    List<News> queryAllNews(@Param("page") Integer page, @Param("count") Integer count);
-    /**查找所有公告的总数*/
-    Integer LookNewsCount();
+public interface NewsMapper  extends BaseMapper<News> {
+
 }

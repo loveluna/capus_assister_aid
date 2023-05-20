@@ -1,7 +1,11 @@
 package project.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
@@ -15,18 +19,18 @@ import java.util.Date;
  *
  *
  */
-@AllArgsConstructor//全参构造
-@NoArgsConstructor//无参构造
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Accessors(chain = true)//链式写法
-public class Notices implements Serializable {
+public class Notices extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /**
      * 通知id
      */
-	private String id;
+    @TableId
+    private String id;
     /**
      * 用户id
      */
@@ -46,7 +50,8 @@ public class Notices implements Serializable {
     /**
      * 通知时间
      */
-	private Date nttime;
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private Date nttime;
     /**
      * 是否为新通知 1是 2不是
      */

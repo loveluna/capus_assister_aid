@@ -1,6 +1,7 @@
 package project.controller.User;
 
 
+import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import project.entity.Login;
 import project.entity.UserInfo;
 import project.entity.UserRole;
@@ -12,14 +13,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import net.sf.json.JSONObject;
-import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.subject.Subject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +35,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @author Administrator
+ */
 @Controller
 @Api(value = "LoginController",tags = "登陆相关")
 public class LoginController {
@@ -156,17 +158,16 @@ public class LoginController {
             String passwords = new Md5Hash(password, "Campus-shops").toString();
             String userid = KeyUtil.genUniqueKey();
             login.setId(KeyUtil.genUniqueKey()).setUserid(userid).setMobilephone(mobilephone).setPassword(passwords);
-            Integer integer = loginService.loginAdd(login);
+            loginService.loginAdd(login);
             //新注册用户存入默认头像、存入默认签名
             userInfo.setUserid(userid).setPassword(passwords).setUimage("/static/pic/d1d66c3ea71044a9b938b00859ca94df.jpg").
                     setSign("如此清秋何吝酒，这般明月不须钱").setStatus("offline");
-            Integer integer1 = userInfoService.userReg(userInfo);
-            if (integer==1 && integer1==1){
+            if (userInfoService.saveUser(userInfo)){
                 /**注册成功后存入session*/
                 session.setAttribute("userid",userid);
                 session.setAttribute("username",username);
                 /**存入用户角色信息*/
-                userRoleService.InsertUserRole(new UserRole().setUserid(userid).setRoleid(1).setIdentity("网站用户"));
+                userRoleService.save(new UserRole().setUserid(userid).setRoleid(1).setIdentity("网站用户"));
                 return new ResultVo(true,StatusCode.OK,"注册成功");
             }
             return new ResultVo(false,StatusCode.ERROR,"注册失败");
@@ -316,9 +317,7 @@ public class LoginController {
             String passwords = new Md5Hash(password, "Campus-shops").toString();
             login1.setPassword(passwords).setId(userIsExist.getId()).setMobilephone(null);
             userInfo.setMobilephone(mobilephone).setPassword(passwords).setUserid(userIsExist.getUserid());
-            Integer integer = loginService.updateLogin(login1);
-            Integer integer1 = userInfoService.UpdateUserInfo(userInfo);
-            if (integer==1 && integer1==1){
+            if (loginService.updateById(login1) && userInfoService.updateUserInfo(userInfo)){
                 return new ResultVo(true,StatusCode.OK,"重置密码成功");
             }
             return new ResultVo(false,StatusCode.ERROR,"重置密码失败");

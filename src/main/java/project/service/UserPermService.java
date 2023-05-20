@@ -1,5 +1,8 @@
 package project.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
+import project.entity.UserInfo;
+import project.entity.UserPerm;
 import project.mapper.UserPermMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,18 +13,10 @@ import java.util.List;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
- *
  */
-@Service
-@Transactional
-public class UserPermService {
-    @Resource
-    private UserPermMapper userPermMapper;
 
-    //查询用户的权限
-    public List<String> LookPermsByUserid(Integer id){
-        return userPermMapper.LookPermsByUserid(id);
-    }
+public interface UserPermService extends IService<UserPerm> {
+    List<String> lookPermsByUserid(Integer roleId);
 }

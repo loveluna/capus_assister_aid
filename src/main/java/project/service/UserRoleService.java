@@ -1,5 +1,7 @@
 package project.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
+import project.entity.UserInfo;
 import project.entity.UserRole;
 import project.mapper.UserRoleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,22 +16,10 @@ import javax.annotation.Resource;
  * </p>
  *
  */
-@Service
-@Transactional
-public class UserRoleService {
-    @Resource
-    private UserRoleMapper userRoleMapper;
+public interface  UserRoleService extends IService<UserRole> {
+    boolean insertUserRole(UserRole userRole);
 
-    /**插入角色*/
-    public Integer InsertUserRole(UserRole userRole){
-        return userRoleMapper.InsertUserRole(userRole);
-    }
-    /**查询角色id*/
-    public Integer LookUserRoleId(String userid){
-        return userRoleMapper.LookUserRoleId(userid);
-    }
-    /**修改用户的角色*/
-    public void UpdateUserRole(UserRole userRole){
-        userRoleMapper.UpdateUserRole(userRole);
-    }
+    Integer lookUserRoleId(String userId);
+
+    boolean updateUserRole(UserRole userRole);
 }

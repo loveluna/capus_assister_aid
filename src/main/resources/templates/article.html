@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>学习互助</title>
+    <!-- Fonts-->
+    <link rel="stylesheet" th:href="@{/css/fontsgoogleapis.css}">
+    <!-- CSS Library-->
+    <link th:href="@{/plugins/bootstrap/bootstrap.min14ed.css?v=3.3.6}" rel="stylesheet">
+    <link th:href="@{/plugins/font-awesome/css/font-awesome.min93e3.css?v=4.4.0}" rel="stylesheet">
+    <link th:href="@{/css/animate.min.css}" rel="stylesheet">
+    <link th:href="@{/css/style.min862f.css?v=4.1.0}" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/plugins/revolution/css/layers.css}">
+    <link rel="stylesheet" th:href="@{/plugins/revolution/css/navigation.css}">
+    <script type="text/javascript" th:src="@{/layui/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/vue.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/style.min862f.css?v=4.1.0}">
+    <script th:inline="javascript">
+        var basePath = [[${#httpServletRequest.getScheme() + "://" + #httpServletRequest.getServerName() + ":" + #httpServletRequest.getServerPort() + #httpServletRequest.getContextPath()}]];
+        var userid = [[${session.userid}]];
+    </script>
+</head>
+<!--参考 layui 后台布局-->
+<body class="layui-layout-body">
+<!--[if IE 7]>
+<body class="ie7 lt-ie8 lt-ie9 lt-ie10"><![endif]-->
+<!--[if IE 8]>
+<body class="ie8 lt-ie9 lt-ie10"><![endif]-->
+<!--[if IE 9]>
+<body class="ie9 lt-ie10"><![endif]-->
+<body class="ps-loading">
+    <header class="header">
+        <div th:include="~{index :: myheader}"></div>
+    </header>
+    <main class="gray-bg" id="app">
+        <div class="wrapper wrapper-content  animated fadeInRight blog">
+            <div class="row">
+                <div class="col-lg-10 col-lg-offset-1">
+                    <div class="ibox">
+                        <div class="ibox-content">
+                            <input type="hidden" name="articleId" id="articleId" :value="article.articleId">
+                            <div class="pull-right">
+                                <button v-for="(tag, index) in article.keywords" class="btn btn-white btn-xs" type="button" :key="index">{{ tag }}</button>
+                            </div>
+                            <div class="text-center article-title">
+                                <h1>{{ article.topic }}</h1>
+                            </div>
+                            <p>{{ article.articleContent }}</p>
+                            <hr>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <h2>评论：</h2>
+                                    <div v-for="(comment, index) in article.comments" :key="index" class="social-feed-box">
+                                        <div class="social-avatar">
+                                            <a href="#" class="pull-left">
+                                                <img alt="image" :src="comment.cuimage">
+                                            </a>
+                                            <div class="media-body">
+                                                <a href="#">{{ comment.cusername }}</a>
+                                                <small class="text-muted">{{ comment.commtime | changeTime }}</small>
+                                            </div>
+                                        </div>
+                                        <div class="social-body">
+                                            <p>{{comment.content }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="social-avatar">
+                                        <a href="#" class="pull-left">
+                                            <img alt="image" :src="userInfo.uimage">
+                                        </a>
+                                        <div class="media-body">
+                                            <textarea class="form-control" id="comment-textarea" placeholder="填写评论..." v-model="newComment"></textarea>
+                                        </div>
+                                        </br>
+                                        <button class="btn btn-primary  btn-xs" type="button" style="float: right;" @click="addComment">保存</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ps-footer bg--cover" >
+            <div th:include="~{index :: myFooter}"></div>
+        </div>
+    </main>
+    <script th:src="@{/layui/jquery.min.js?v=2.1.4}"></script>
+    <script th:src="@{/js/bootstrap.min.js?v=3.3.6}"></script>
+    <script th:src="@{/js/content.min.js?v=1.0.0}"></script>
+    <script th:src="@{/layui/layui.all.js}"></script>
+    <script th:src="@{/js/common/core.util.js}"></script>
+    <script th:inline="javascript" type="text/javascript">
+        var ctx = '[[@{/}]]'.replaceAll("\"", "").replace('//', '/');
+
+        function addComment() {
+            const content = this.newComment.trim()
+            if (content !== '') {
+                const commentParm = {
+                    commentOnId: this.article.articleId,
+                    content: content
+                }
+                CoreUtil.sendPost(ctx + article / add, commentParm, res => {
+                    layer.msg(res.msg)
+                    location.reload()
+                })
+            }
+        }
+    </script>
+    <script type="text/javascript" th:src="@{/js/timeago.js}"></script>
+    <script th:src="@{/js/common/article.js}"></script>
+</body>
+</html>

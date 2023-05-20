@@ -1,5 +1,6 @@
 package project;
 
+import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
@@ -14,8 +15,8 @@ import java.net.UnknownHostException;
 
 @EnableAsync //开启异步任务
 @EnableScheduling //开启基于注解的定时任务
-@SpringBootApplication
 @Slf4j
+@SpringBootApplication(exclude = DruidDataSourceAutoConfigure.class)
 @MapperScan({"project.mapper"})
 public class ShopsApplication {
 

@@ -1,5 +1,7 @@
 package project.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import project.entity.Commodity;
 import project.entity.Login;
 
 /**
@@ -9,11 +11,5 @@ import project.entity.Login;
  *
  *
  */
-public interface LoginMapper {
-    /**注册*/
-    Integer loginAdd(Login login);
-    /**登录及判断用户是否存在*/
-    Login userLogin(Login login);
-    /**修改登录信息*/
-    Integer updateLogin(Login login);
+public interface LoginMapper extends BaseMapper<Login> {
 }

@@ -1,5 +1,7 @@
 package project.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
+import project.entity.Commodity;
 import project.entity.UserInfo;
 import project.entity.chat.Friends;
 import project.mapper.FriendsMapper;
@@ -10,36 +12,13 @@ import javax.annotation.Resource;
 import java.util.List;
 
 
-@Service
-public class FriendsService {
-    @Resource
-    FriendsMapper friendsMapper;
 
-    /**
-     * 添加好友
-     */
-    public void insertFriend(Friends friends) {
-        friendsMapper.insertFriend (friends);
-    }
+public interface FriendsService  extends IService<Friends> {
+    boolean insertFriend(Friends friends);
 
-    /**
-     * 判断双方是否是好友
-     */
-    public Integer JustTwoUserIsFriend(Friends friends) {
-        return friendsMapper.JustTwoUserIsFriend (friends);
-    }
+    boolean justTwoUserIsFriend(Friends friends);
 
-    /**
-     * 查询用户的好友列表
-     */
-    public List<UserInfo> LookUserFriend(String userid) {
-        return friendsMapper.LookUserFriend (userid);
-    }
+    List<UserInfo> lookUserFriend(String userId);
 
-    /**
-     * 查询用户的信息
-     */
-    public UserInfo LookUserMine(String userid) {
-        return friendsMapper.LookUserMine (userid);
-    }
+    UserInfo lookUserMine(String userId);
 }

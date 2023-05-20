@@ -91,7 +91,7 @@ button {
     top: 0;
     width: 900px;
     height: 100%;
-    background-image: url(https://img-blog.csdnimg.cn/20200109111815957.jpg);
+    background-image: url(../../images/background/20200109111815957.jpg);
     background-size: cover;
     transition: -webkit-transform 0.6s ease-in-out;
     transition: transform 0.6s ease-in-out;

@@ -1,4 +1,5 @@
 package project.controller.admin;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import project.service.*;
 import project.util.JustPhone;
 import project.util.KeyUtil;
@@ -92,7 +93,7 @@ public class AdminController {
             login.setPassword(passwords);
             Login login1 = loginService.userLogin(login);
             //查询登录者的权限
-            Integer roleId = userRoleService.LookUserRoleId(login1.getUserid());
+            Integer roleId = userRoleService.lookUserRoleId(login1.getUserid());
             if (roleId == 2 || roleId == 3) {
                 session.setAttribute("userid", login1.getUserid());
                 session.setAttribute("admin", login1.getUsername());
@@ -150,9 +151,8 @@ public class AdminController {
     @ApiOperation(value = "设置为管理员或普通成员", httpMethod = "PUT", response = ResultVo.class)
     public ResultVo setadmin(@PathVariable("userid") String userid, @PathVariable("roleid") Integer roleid) {
         if (roleid == 2) {
-            Integer i = loginService.updateLogin(new Login().setUserid(userid).setRoleid(roleid));
-            if (i == 1) {
-                userRoleService.UpdateUserRole(new UserRole().setUserid(userid).setRoleid(2).setIdentity("网站管理员"));
+            if (loginService.updateById(new Login().setUserid(userid).setRoleid(roleid))) {
+                userRoleService.updateUserRole(new UserRole().setUserid(userid).setRoleid(2).setIdentity("网站管理员"));
                 /**发出设置为管理员的系统通知*/
                 Notices notices = new Notices().setId(KeyUtil.genUniqueKey()).setUserid(userid).setTpname("系统通知")
                         .setWhys("恭喜您已被设置为网站管理员，努力维护网站的良好氛围。");
@@ -161,9 +161,8 @@ public class AdminController {
             }
             return new ResultVo(true, StatusCode.ERROR, "设置管理员失败");
         } else if (roleid == 1) {
-            Integer i = loginService.updateLogin(new Login().setUserid(userid).setRoleid(roleid));
-            if (i == 1) {
-                userRoleService.UpdateUserRole(new UserRole().setUserid(userid).setRoleid(1).setIdentity("网站用户"));
+            if (loginService.updateLogin(new Login().setUserid(userid).setRoleid(roleid))) {
+                userRoleService.updateUserRole(new UserRole().setUserid(userid).setRoleid(1).setIdentity("网站用户"));
                 /**发出设置为网站用户的系统通知*/
                 Notices notices = new Notices().setId(KeyUtil.genUniqueKey()).setUserid(userid).setTpname("系统通知")
                         .setWhys("您已被设置为网站用户，希望您再接再厉。");
@@ -184,9 +183,8 @@ public class AdminController {
     @ApiOperation(value = "用户封号解封", httpMethod = "PUT", response = ResultVo.class)
     public ResultVo adminuserlist(@PathVariable("userid") String userid, @PathVariable("userstatus") Integer userstatus) {
         if (userstatus == 0) {
-            Integer i = loginService.updateLogin(new Login().setUserid(userid).setUserstatus(userstatus));
-            Integer j = userInfoService.UpdateUserInfo(new UserInfo().setUserid(userid).setUserstatus(userstatus));
-            if (i == 1 && j == 1) {
+            boolean updateUserInfo = userInfoService.updateUserInfo(new UserInfo().setUserid(userid).setUserstatus(userstatus));
+            if (loginService.updateById(new Login().setUserid(userid).setUserstatus(userstatus)) && updateUserInfo) {
                 /**发出封号的系统通知*/
                 Notices notices = new Notices().setId(KeyUtil.genUniqueKey()).setUserid(userid).setTpname("系统通知")
                         .setWhys("因为您的不良行为，您在该网站的账号已被封号。");
@@ -195,9 +193,8 @@ public class AdminController {
             }
             return new ResultVo(true, StatusCode.ERROR, "封号失败");
         } else if (userstatus == 1) {
-            Integer i = loginService.updateLogin(new Login().setUserid(userid).setUserstatus(userstatus));
-            Integer j = userInfoService.UpdateUserInfo(new UserInfo().setUserid(userid).setUserstatus(userstatus));
-            if (i == 1 && j == 1) {
+            boolean isUpdateSuccess = userInfoService.updateUserInfo(new UserInfo().setUserid(userid).setUserstatus(userstatus));
+            if (loginService.updateById(new Login().setUserid(userid).setUserstatus(userstatus)) && isUpdateSuccess) {
                 /**发出解封的系统通知*/
                 Notices notices = new Notices().setId(KeyUtil.genUniqueKey()).setUserid(userid).setTpname("系统通知")
                         .setWhys("您在该网站的账号已被解封，希望您保持良好的行为。");
@@ -228,12 +225,14 @@ public class AdminController {
     @ApiOperation(value = "分页管理员擦好看各类商品信息", httpMethod = "GET", response = LayuiPageVo.class)
     public LayuiPageVo userCommodity(@PathVariable("commstatus") Integer commstatus, int limit, int page) {
         if (commstatus == 100) {
-            List<Commodity> commodityList = commodityService.queryAllCommodity((page - 1) * limit, limit, null, null);
+            IPage<Commodity> commodityIPage = commodityService.queryAllCommodity(null, null, (page - 1) * limit, limit);
+            List<Commodity> commodityList = commodityIPage.getRecords();
             Integer dataNumber = commodityService.queryCommodityCount(null, null);
             return new LayuiPageVo("", 0, dataNumber, commodityList);
         } else {
-            List<Commodity> commodityList = commodityService.queryAllCommodity((page - 1) * limit, limit, null, commstatus);
-            Integer dataNumber = commodityService.queryCommodityCount(null, commstatus);
+            IPage<Commodity> commodityIPage = commodityService.queryAllCommodity(commstatus, null, (page - 1) * limit, limit);
+            List<Commodity> commodityList = commodityIPage.getRecords();
+            Integer dataNumber = commodityService.queryCommodityCount(commstatus, null);
             return new LayuiPageVo("", 0, dataNumber, commodityList);
         }
     }
@@ -247,10 +246,9 @@ public class AdminController {
     @PutMapping("/admin/changecommstatus/{commid}/{commstatus}")
     @ApiOperation(value = "管理员对商品操作", httpMethod = "PUT", response = ResultVo.class)
     public ResultVo ChangeCommstatus(@PathVariable("commid") String commid, @PathVariable("commstatus") Integer commstatus) {
-        Integer i = commodityService.ChangeCommstatus(commid, commstatus);
-        if (i == 1) {
+        if (commodityService.updateCommstatus(commid, commstatus)) {
             /**发出商品审核结果的系统通知*/
-            Commodity commodity = commodityService.LookCommodity(new Commodity().setCommid(commid));
+            Commodity commodity = commodityService.queryCommodityById(commid);
             if (commstatus == 0) {
                 Notices notices = new Notices().setId(KeyUtil.genUniqueKey()).setUserid(commodity.getUserid()).setTpname("商品审核")
                         .setWhys("您的商品 <a href=/product-detail/" + commodity.getCommid() + " style=\"color:#08bf91\" target=\"_blank\" >" + commodity.getCommname() + "</a> 未通过审核，目前不支持公开发布。");

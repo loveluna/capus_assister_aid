@@ -1,7 +1,11 @@
 package project.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
@@ -16,17 +20,14 @@ import java.util.Date;
  *
  *
  */
-@AllArgsConstructor//全参构造
-@NoArgsConstructor//无参构造
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Accessors(chain = true)//链式写法
-public class Soldrecord implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
+public class Soldrecord extends BaseEntity implements Serializable {
     /**
      * 售出记录id
      */
+    @TableId
     private String id;
     /**
      * 商品id
@@ -47,6 +48,7 @@ public class Soldrecord implements Serializable {
     /**
      * 售出时间
      */
+    @TableField(fill = FieldFill.INSERT)
     private Date soldtime;
     /**
      * 用户id

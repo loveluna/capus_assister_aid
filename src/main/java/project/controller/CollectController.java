@@ -57,34 +57,25 @@ public class CollectController {
         }
 
         if (colloperate == 1){
-            Collect collect1 = collectService.queryCollectStatus(collect);
+            Collect collect1 = collectService.queryCollectStatus(collect.getCouserid(), collect.getCommid());
             if(!StringUtils.isEmpty(collect1)){
                 /**更改原来的收藏信息和状态*/
                 collect1.setCommname(collect.getCommname()).setCommdesc(collect.getCommdesc()).setSchool(collect.getSchool())
                         .setSoldtime(GetDate.strToDate());
-                Integer i = collectService.updateCollect(collect);
-                if (i == 1){
+                collectService.updateCollect(collect);
                     return new ResultVo(true, StatusCode.OK,"收藏成功");
-                }
-                return new ResultVo(false,StatusCode.ERROR,"收藏失败");
             }else{
                 collect.setId(KeyUtil.genUniqueKey());
-                Integer i = collectService.insertCollect(collect);
-                if (i == 1){
-                    return new ResultVo(true, StatusCode.OK,"收藏成功");
-                }
-                return new ResultVo(false,StatusCode.ERROR,"收藏失败");
+                collectService.insertCollect(collect);
+                return new ResultVo(true, StatusCode.OK,"收藏成功");
             }
 
         }else {
-            Collect collect1 = collectService.queryCollectStatus(collect);
+            Collect collect1 = collectService.queryCollectStatus(collect.getCouserid(), collect.getCommid());
             /**判断是否为本人操作*/
             if (collect1.getCouserid().equals(couserid)){
-                Integer i = collectService.updateCollect(collect);
-                if (i == 1){
-                    return new ResultVo(true, StatusCode.OK,"取消成功");
-                }
-                return new ResultVo(false,StatusCode.ERROR,"取消失败");
+                collectService.updateCollect(collect);
+                return new ResultVo(true, StatusCode.OK,"取消成功");
             }
             return new ResultVo(false,StatusCode.ACCESSERROR,"禁止操作");
         }
@@ -101,16 +92,12 @@ public class CollectController {
     @ApiOperation (value = "取消收藏状态返回",httpMethod = "PUT",response = ResultVo.class)
     public ResultVo deletecollect(@PathVariable("id") String id,HttpSession session){
         String couserid = (String) session.getAttribute("userid");
-        Collect collect = new Collect().setId(id).setCouserid(couserid);
-        Collect collect1 = collectService.queryCollectStatus(collect);
+        Collect collect = collectService.getById(id);
         /**判断是否为本人操作*/
-        if (collect1.getCouserid().equals(couserid)){
+        if (collect.getCouserid().equals(couserid)){
             collect.setColloperate(2);
-            Integer i = collectService.updateCollect(collect);
-            if (i == 1){
-                return new ResultVo(true, StatusCode.OK,"取消成功");
-            }
-            return new ResultVo(false,StatusCode.ERROR,"取消失败");
+            collectService.updateCollect(collect);
+            return new ResultVo(true, StatusCode.OK,"取消成功");
         }
         return new ResultVo(false,StatusCode.ACCESSERROR,"禁止操作");
     }
@@ -125,7 +112,7 @@ public class CollectController {
     @ApiOperation (value = "收藏内容",httpMethod = "POST",response = LayuiPageVo.class)
     public LayuiPageVo usercollect(int limit, int page, HttpSession session) {
         String couserid = (String) session.getAttribute("userid");
-        List<Collect> collectList = collectService.queryAllCollect((page - 1) * limit, limit, couserid);
+        List<Collect> collectList = collectService.queryAllCollect(couserid, page, limit);
         Integer dataNumber = collectService.queryCollectCount(couserid);
         return new LayuiPageVo("",0,dataNumber,collectList);
     }

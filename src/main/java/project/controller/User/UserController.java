@@ -72,9 +72,7 @@ public class UserController {
             String passwords = new Md5Hash(newpwd, "Campus-shops").toString();
             login.setPassword(passwords);
             userInfo.setPassword(passwords).setUserid(login1.getUserid());
-            Integer integer = loginService.updateLogin(login);
-            Integer integer1 = userInfoService.UpdateUserInfo(userInfo);
-            if (integer == 1 && integer1 == 1) {
+            if (loginService.updateById(login) && userInfoService.updateUserInfo(userInfo)) {
                 return new ResultVo(true, StatusCode.OK, "修改密码成功");
             }
             return new ResultVo(false, StatusCode.ERROR, "修改密码失败");
@@ -116,7 +114,7 @@ public class UserController {
 
         String userid=(String) session.getAttribute("userid");
         UserInfo userInfo = new UserInfo().setUserid(userid).setUimage(uimgUrl);
-        userInfoService.UpdateUserInfo(userInfo);
+        userInfoService.updateUserInfo(userInfo);
         return res;
     }
 
@@ -128,7 +126,7 @@ public class UserController {
     @ApiOperation(value = "跳转展示个人信息", httpMethod = "GET")
     public String lookinfo(HttpSession session, ModelMap modelMap) {
         String userid = (String) session.getAttribute("userid");
-        UserInfo userInfo = userInfoService.LookUserinfo(userid);
+        UserInfo userInfo = userInfoService.lookUserinfo(userid);
         modelMap.put("userInfo",userInfo);
         return "/user/userinfo";
     }
@@ -140,7 +138,7 @@ public class UserController {
     @ApiOperation(value = "跳转到完善个人信息", httpMethod = "POST")
     public String perfectInfo(HttpSession session, ModelMap modelMap) {
         String userid = (String) session.getAttribute("userid");
-        UserInfo userInfo = userInfoService.LookUserinfo(userid);
+        UserInfo userInfo = userInfoService.lookUserinfo(userid);
         modelMap.put("perfectInfo",userInfo);
         return "/user/perfectInfo";
     }
@@ -169,11 +167,10 @@ public class UserController {
             }
             login.setUserid(userid);
             //修改登录表中用户名
-            loginService.updateLogin(login);
+            loginService.updateById(login);
         }
         userInfo.setUserid(userid);
-        Integer integer1 = userInfoService.UpdateUserInfo(userInfo);
-        if (integer1 == 1) {
+        if (userInfoService.updateUserInfo(userInfo)) {
             return new ResultVo(true, StatusCode.OK, "修改成功");
         }
         return new ResultVo(false, StatusCode.ERROR, "修改失败");
@@ -258,9 +255,7 @@ public class UserController {
         if (rel.equalsIgnoreCase(vercode)) {//验证码正确
             Login login = new Login().setUserid(userid).setMobilephone(mobilephone);
             UserInfo userInfo = new UserInfo().setUserid(userid).setMobilephone(mobilephone);
-            Integer integer = loginService.updateLogin(login);
-            Integer integer1 = userInfoService.UpdateUserInfo(userInfo);
-            if (integer == 1 && integer1 == 1) {
+            if (loginService.updateById(login) && userInfoService.updateUserInfo(userInfo)) {
                 return new ResultVo(true, StatusCode.OK, "更换手机号成功");
             }
             return new ResultVo(false, StatusCode.SERVERERROR, "系统错误，更换失败");

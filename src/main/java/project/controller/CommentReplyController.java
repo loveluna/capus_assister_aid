@@ -48,7 +48,7 @@ public class CommentReplyController {
         List<Comment> commentsList = commentService.queryComments(commid);
         for (Comment comment : commentsList) {
             /**查询对应评论下的回复*/
-            List<Reply> repliesList = replyService.queryReply(comment.getCid());
+            List<Reply> repliesList = replyService.queryReplys(comment.getCid());
             for (Reply reply : repliesList) {
                 /**查询回复者的昵称和头像信息*/
                 UserInfo ruser = userInfoService.queryPartInfo(reply.getRuserid());
@@ -88,10 +88,9 @@ public class CommentReplyController {
 
         comment.setCid(KeyUtil.genUniqueKey()).setCuserid(cuserid).setContent(content);
         /**插入评论*/
-        Integer i = commentService.insertComment(comment);
-        if (i == 1){
+        if (commentService.insertComment(comment)){
             /**发出评论通知消息*/
-            Commodity commodity = commodityService.LookCommodity(new Commodity().setCommid(comment.getCommid()));
+            Commodity commodity = commodityService.queryCommodityById(comment.getCommid());
             Notices notices = new Notices().setId(KeyUtil.genUniqueKey()).setUserid(comment.getSpuserid()).setTpname("评论")
                     .setWhys("您的商品 <a href=/product-detail/"+comment.getCommid()+" style=\"color:#08bf91\" target=\"_blank\" >"+commodity.getCommname()+"</a> 被评论了，快去看看吧。");
             noticesService.insertNotices(notices);
@@ -123,10 +122,9 @@ public class CommentReplyController {
 
         reply.setRid(KeyUtil.genUniqueKey()).setRuserid(ruserid).setRecontent(recontent);
         /**插入回复*/
-        Integer i = replyService.insetReply(reply);
-        if (i == 1){
+        if (replyService.insetReply(reply)){
             /**发出评论回复通知消息*/
-            Commodity commodity = commodityService.LookCommodity(new Commodity().setCommid(reply.getCommid()));
+            Commodity commodity = commodityService.queryCommodityById(reply.getCommid());
             Notices notices = new Notices().setId(KeyUtil.genUniqueKey()).setUserid(reply.getCuserid()).setTpname("评论回复")
                     .setWhys("有小伙伴在 <a href=/product-detail/"+reply.getCommid()+" style=\"color:#08bf91\" target=\"_blank\" >"+commodity.getCommname()+"</a> 下回复了您的评论，快去看看吧。");
             noticesService.insertNotices(notices);
@@ -149,9 +147,7 @@ public class CommentReplyController {
         Comment comment = commentService.queryById(cid);
         /**如果是评论者本人或者商品发布者则进行删除操作*/
         if (comment.getCuserid().equals(cuserid) || comment.getSpuserid().equals(cuserid)){
-            Integer i = commentService.deleteComment(cid);
-            Integer j = replyService.deleteReply(new Reply().setCid(cid));
-            if (i == 1 && j == 1){
+            if (commentService.deleteComment(cid) && replyService.deleteReply(new Reply().setCid(cid))){
                 return new ResultVo(true, StatusCode.OK,"删除成功");
             }
             return new ResultVo(false, StatusCode.ERROR,"删除失败");
@@ -173,8 +169,7 @@ public class CommentReplyController {
         Reply reply = replyService.queryById(rid);
         /**如果是回复者本人或者商品发布者则进行删除操作*/
         if (reply.getRuserid().equals(ruserid) || reply.getSpuserid().equals(ruserid)){
-            Integer i = replyService.deleteReply(new Reply().setRid(rid));
-            if (i == 1){
+            if (replyService.deleteReply(new Reply().setRid(rid))){
                 return new ResultVo(true, StatusCode.OK,"删除成功");
             }
             return new ResultVo(false, StatusCode.ERROR,"删除失败");

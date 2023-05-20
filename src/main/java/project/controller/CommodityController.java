@@ -2,23 +2,23 @@ package project.controller;
 
 
 import com.alibaba.fastjson.JSONObject;
-import project.service.*;
-import project.util.KeyUtil;
-import project.util.StatusCode;
-import project.vo.LayuiPageVo;
-import project.vo.PageVo;
-import project.vo.ResultVo;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.io.FilenameUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import project.entity.*;
+import project.service.*;
+import project.util.KeyUtil;
+import project.util.StatusCode;
+import project.vo.LayuiPageVo;
+import project.vo.PageVo;
+import project.vo.ResultVo;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
@@ -77,14 +77,14 @@ public class CommodityController {
         if(userid==null){
             return "redirect:/:";
         }*/
-        Commodity commodity=commodityService.LookCommodity(new Commodity().setCommid(commid));
+        Commodity commodity=commodityService.queryCommodityById(commid);
         if(commodity.getCommstatus().equals(2) || commodity.getCommstatus().equals(4)){
             return "/error/404";//商品已被删除或已完成交易
         }
         String[] commons=commodity.getCommon().split("、");
         commodity.setCommon(commons[0]).setCommon2(commons[1]);
         modelMap.put("goods",commodity);
-        modelMap.put("otherimg",commimagesService.LookGoodImages(commid));
+        modelMap.put("otherimg",commimagesService.findImagesByCommId(commid));
         return "/user/product/changegoods";
     }
 
@@ -101,13 +101,13 @@ public class CommodityController {
         String userid = (String) session.getAttribute("userid");
         commodity.setUpdatetime(new Date()).setCommstatus(3);
         commodity.setCommon(commodity.getCommon()+"、"+commodity.getCommon2());//常用选项拼接
-        commodityService.ChangeCommodity(commodity);
-        commimagesService.DelGoodImages(commodity.getCommid());
+        commodityService.updateCommodity(commodity);
+        commimagesService.delGoodImages(commodity.getCommid());
         List<Commimages> commimagesList=new ArrayList<>();
         for (String list:commodity.getOtherimg()) {
             commimagesList.add(new Commimages().setId(KeyUtil.genUniqueKey()).setCommid(commodity.getCommid()).setImage(list));
         }
-        commimagesService.InsertGoodImages(commimagesList);
+        commimagesService.insertGoodImages(commimagesList);
         /**发出待审核系统通知*/
         Notices notices = new Notices().setId(KeyUtil.genUniqueKey()).setUserid(userid).setTpname("商品审核")
                 .setWhys("您的商品 <a href=/product-detail/"+commodity.getCommid()+" style=\"color:#08bf91\" target=\"_blank\" >"+commodity.getCommname()+"</a> 进入待审核队列，请您耐心等待。");
@@ -127,16 +127,16 @@ public class CommodityController {
     @ApiOperation (value = "发布商品",httpMethod = "POST",response = String.class)
     public String relgoods(@RequestBody Commodity commodity, HttpSession session){
         String userid = (String) session.getAttribute("userid");
-        UserInfo userInfo = userInfoService.LookUserinfo(userid);
+        UserInfo userInfo = userInfoService.lookUserinfo(userid);
         String commid = KeyUtil.genUniqueKey();
         commodity.setCommid(commid).setUserid(userid).setSchool(userInfo.getSchool());//商品id
         commodity.setCommon(commodity.getCommon()+"、"+commodity.getCommon2());//常用选项拼接
-        commodityService.InsertCommodity(commodity);
+        commodityService.saveCommodity(commodity);
         List<Commimages> commimagesList=new ArrayList<>();
         for (String list:commodity.getOtherimg()) {
             commimagesList.add(new Commimages().setId(KeyUtil.genUniqueKey()).setCommid(commid).setImage(list));
         }
-        commimagesService.InsertGoodImages(commimagesList);
+        commimagesService.insertGoodImages(commimagesList);
         /**发出待审核系统通知*/
         Notices notices = new Notices().setId(KeyUtil.genUniqueKey()).setUserid(userid).setTpname("商品审核")
                 .setWhys("您的商品 <a href=/product-detail/"+commid+" style=\"color:#08bf91\" target=\"_blank\" >"+commodity.getCommname()+"</a> 进入待审核队列，请您耐心等待。");
@@ -200,7 +200,7 @@ public class CommodityController {
     public String product_detail(@PathVariable("commid") String commid, ModelMap modelMap,HttpSession session){
         String couserid = (String) session.getAttribute("userid");
 
-        Commodity commodity = commodityService.LookCommodity(new Commodity().setCommid(commid).setCommstatus(1));
+        Commodity commodity = commodityService.queryCommodityById(commid);
         int i = 0;
         if (commodity.getCommstatus().equals(1)){//如果商品正常
             i=1;
@@ -218,16 +218,16 @@ public class CommodityController {
             }
         }
         if(i==1){
-            commodity.setOtherimg(commimagesService.LookGoodImages(commid));
+            commodity.setOtherimg(commimagesService.findImagesByCommId(commid));
             /**商品浏览量+1*/
-            commodityService.ChangeCommodity(new Commodity().setCommid(commid).setRednumber(1));
+            commodityService.updateCommodity(new Commodity().setCommid(commid).setRednumber(1));
             modelMap.put("userinfo",userInfoService.queryPartInfo(commodity.getUserid()));
             modelMap.put("gddetail",commodity);
             //如果没有用户登录
             if (StringUtils.isEmpty(couserid)){
                 modelMap.put("collectstatus",2);
             }else {
-                Collect collect = collectService.queryCollectStatus(new Collect().setCommid(commid).setCouserid(couserid));
+                Collect collect = collectService.queryCollectStatus(commid, couserid);
                 if(collect!=null){
                     if (collect.getCollstatus() == 2){
                         modelMap.put("collectstatus",2);
@@ -245,7 +245,9 @@ public class CommodityController {
     }
 
     /**
-     * 搜索商品分页数据
+     * 搜索+
+     * 商
+     * 8/963.品分页数\据
      * 前端传入搜索的商品名（commname）
      * */
     @GetMapping("/product/search/number/{commname}")
@@ -264,12 +266,12 @@ public class CommodityController {
     @ResponseBody
     @ApiOperation (value = "搜索商品",httpMethod = "GET",response = ResultVo.class)
     public ResultVo searchCommodity(@PathVariable("nowPaging") Integer page, @PathVariable("commname") String commname){
-        List<Commodity> commodityList = commodityService.queryCommodityByName((page - 1) * 20, 20, commname);
-
+        IPage<Commodity> commodityIPage = commodityService.queryCommodityByName(commname, (page - 1) * 20, 20);
+        List<Commodity> commodityList = commodityIPage.getRecords();
         if(!StringUtils.isEmpty(commodityList)){//如果有对应商品
             for (Commodity commodity : commodityList) {
                 /**查询商品对应的其它图片*/
-                List<String> imagesList = commimagesService.LookGoodImages(commodity.getCommid());
+                List<String> imagesList = commimagesService.findImagesByCommId(commodity.getCommid());
                 commodity.setOtherimg(imagesList);
             }
             return new ResultVo(true,StatusCode.OK,"查询成功",commodityList);
@@ -289,7 +291,7 @@ public class CommodityController {
         List<Commodity> commodityList = commodityService.queryCommodityByCategory(category);
         for (Commodity commodity : commodityList) {
             /**查询商品对应的其它图片*/
-            List<String> imagesList = commimagesService.LookGoodImages(commodity.getCommid());
+            List<String> imagesList = commimagesService.findImagesByCommId(commodity.getCommid());
             commodity.setOtherimg(imagesList);
         }
             return new ResultVo(true,StatusCode.OK,"查询成功",commodityList);
@@ -306,7 +308,7 @@ public class CommodityController {
         List<Commodity> commodityList = commodityService.queryCommodityByCategory(category);
         for (Commodity commodity : commodityList) {
             /**查询商品对应的其它图片*/
-            List<String> imagesList = commimagesService.LookGoodImages(commodity.getCommid());
+            List<String> imagesList = commimagesService.findImagesByCommId(commodity.getCommid());
             commodity.setOtherimg(imagesList);
         }
         return new ResultVo(true,StatusCode.OK,"查询成功",commodityList);
@@ -327,10 +329,10 @@ public class CommodityController {
         String school=null;
         if(!area.equals("全部")){
             String userid = (String) session.getAttribute("userid");
-            UserInfo userInfo = userInfoService.LookUserinfo(userid);
+            UserInfo userInfo = userInfoService.lookUserinfo(userid);
             school = userInfo.getSchool();
         }
-        Integer dataNumber = commodityService.queryAllCommodityByCategoryCount(area, school, category, minmoney, maxmoney);
+        Integer dataNumber = commodityService.queryAllCommodityByCategoryCount(category, minmoney, maxmoney, area, school);
         return new PageVo(StatusCode.OK,"查询成功",dataNumber);
     }
 
@@ -349,13 +351,14 @@ public class CommodityController {
         String school=null;
         if(!area.equals("全部")) {
             String userid = (String) session.getAttribute("userid");
-            UserInfo userInfo = userInfoService.LookUserinfo(userid);
+            UserInfo userInfo = userInfoService.lookUserinfo(userid);
             school = userInfo.getSchool();
         }
-        List<Commodity> commodityList = commodityService.queryAllCommodityByCategory((page - 1) * 16, 16, area, school, category, minmoney, maxmoney);
+        IPage<Commodity> commodityIPage = commodityService.queryAllCommodityByCategory(category, minmoney, maxmoney, area, school, (page - 1) * 16, 16);
+        List<Commodity> commodityList = commodityIPage.getRecords();
         for (Commodity commodity : commodityList) {
             /**查询商品对应的其它图片*/
-            List<String> imagesList = commimagesService.LookGoodImages(commodity.getCommid());
+            List<String> imagesList = commimagesService.findImagesByCommId(commodity.getCommid());
             commodity.setOtherimg(imagesList);
         }
 
@@ -415,11 +418,13 @@ public class CommodityController {
         List<Commodity> commodityList=null;
         Integer dataNumber;
         if(commstatus==100){
-            commodityList = commodityService.queryAllCommodity((page - 1) * limit, limit, userid,null);
-            dataNumber = commodityService.queryCommodityCount(userid,null);
+            IPage<Commodity> commodityIPage = commodityService.queryAllCommodity(null, userid,(page - 1) * limit, limit);
+            commodityList = commodityIPage.getRecords();
+            dataNumber = commodityService.queryCommodityCount(null,userid);
         }else{
-            commodityList = commodityService.queryAllCommodity((page - 1) * limit, limit, userid,commstatus);
-            dataNumber = commodityService.queryCommodityCount(userid,commstatus);
+            IPage<Commodity> commodityIPage  = commodityService.queryAllCommodity(commstatus,  userid,(page - 1) * limit, limit);
+            commodityList = commodityIPage.getRecords();
+            dataNumber = commodityService.queryCommodityCount(commstatus,userid);
         }
         return new LayuiPageVo("",0,dataNumber,commodityList);
     }
@@ -433,13 +438,12 @@ public class CommodityController {
     @GetMapping("/user/changecommstatus/{commid}/{commstatus}")
     @ApiOperation (value = "个人岁商品操作返回状态",httpMethod = "GET",response = ResultVo.class)
     public ResultVo ChangeCommstatus(@PathVariable("commid") String commid, @PathVariable("commstatus") Integer commstatus, HttpSession session) {
-        Integer i = commodityService.ChangeCommstatus(commid, commstatus);
-        if (i == 1){
+        if (commodityService.updateCommstatus(commid, commstatus)){
             /**如果商品已售出*/
             if (commstatus == 4){
                 String userid = (String) session.getAttribute("userid");
                 /**查询售出商品的信息*/
-                Commodity commodity = commodityService.LookCommodity(new Commodity().setCommid(commid));
+                Commodity commodity = commodityService.queryCommodityById(commid);
                 Soldrecord soldrecord = new Soldrecord();
                 /**将商品信息添加到售出记录中*/
                 soldrecord.setId(KeyUtil.genUniqueKey()).setCommid(commid).setCommname(commodity.getCommname()).setCommdesc(commodity.getCommdesc())

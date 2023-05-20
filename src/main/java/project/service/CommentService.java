@@ -1,5 +1,7 @@
 package project.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
+import project.entity.Collect;
 import project.entity.Comment;
 import project.mapper.CommentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,24 +19,15 @@ import java.util.List;
  */
 @Service
 @Transactional
-public class CommentService {
-    @Resource
-    private CommentMapper commentMapper;
+public interface CommentService extends IService<Comment> {
+    List<Comment> queryComments(String commid);
 
-    /**插入评论*/
-    public Integer insertComment(Comment comment){
-        return commentMapper.insertComment(comment);
-    }
-    /**查询评论*/
-    public List<Comment> queryComments(String commid){
-        return commentMapper.queryComments(commid);
-    }
-    /**查询评论中用户信息*/
-    public Comment queryById(String cid){
-        return commentMapper.queryById(cid);
-    }
-    /**删除评论*/
-    public Integer deleteComment(String cid){
-        return commentMapper.deleteComment(cid);
-    }
+    Comment queryById(String cid);
+
+    boolean insertComment(Comment comment);
+
+    boolean deleteComment(String cid);
+
+
+    void addComments(String userId, Comment comment);
 }

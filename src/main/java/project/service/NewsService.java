@@ -1,6 +1,8 @@
 package project.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import project.entity.News;
+import project.entity.UserInfo;
 import project.mapper.NewsMapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,50 +18,22 @@ import java.util.List;
  * </p>
  *
  */
-@Service
-@Transactional
-public class NewsService {
-    @Resource
-    private NewsMapper newsMapper;
 
-    /**发布公告*/
-    public Integer insertNews(News news){
-        return newsMapper.insertNews(news);
-    }
+public interface NewsService extends IService<News> {
 
-    /**删除公告*/
-    public Integer delectNews(String id){
-        return newsMapper.delectNews(id);
-    }
+    boolean insertNews(News news);
 
-    /**修改公告*/
-    public Integer updateNews(News news){
-        return newsMapper.updateNews(news);
-    }
+    boolean deleteNews(String id);
 
-    /**查看公告详情*/
-    public News queryNewsById(String id){
-        return newsMapper.queryNewsById(id);
-    }
+    boolean updateNews(News news);
 
-    /**浏览量*/
-    public void addNewsRednumber(String id){
-        newsMapper.addNewsRednumber(id);
-    }
+    News queryNewsById(String id);
 
-    /**查询前三条公告*/
-    public List<News> queryNews(){
-        return newsMapper.queryNews();
-    }
+    boolean addNewsRednumber(String id);
 
-    /**分页展示公告信息*/
-    public List<News> queryAllNews(@Param("page") Integer page, @Param("count") Integer count){
-        return newsMapper.queryAllNews(page,count);
-    }
+    List<News> queryAllNews(Integer page, Integer count);
 
-    /**查找所有公告的总数*/
-    public Integer LookNewsCount(){
-        return newsMapper.LookNewsCount();
-    }
+    Integer LookNewsCount();
 
+    List<News> queryNews();
 }

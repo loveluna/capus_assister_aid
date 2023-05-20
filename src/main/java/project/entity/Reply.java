@@ -1,7 +1,11 @@
 package project.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
@@ -15,18 +19,15 @@ import java.util.Date;
  *
 
  */
-@AllArgsConstructor//全参构造
-@NoArgsConstructor//无参构造
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Accessors(chain = true)//链式写法
-public class Reply implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
+public class Reply extends BaseEntity implements Serializable {
     /**
      * 回复id
      */
-	private String rid;
+    @TableId
+    private String rid;
     /**
      * 评论id
      */
@@ -66,7 +67,8 @@ public class Reply implements Serializable {
     /**
      * 回复时间
      */
-	private Date replytime;
+    @TableField(fill = FieldFill.INSERT)
+    private Date replytime;
     /**
      * 0异常 1正常 2删除
      */

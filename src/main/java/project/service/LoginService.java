@@ -1,6 +1,8 @@
 package project.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.beans.factory.annotation.Value;
+import project.entity.Commodity;
 import project.entity.Login;
 import project.mapper.LoginMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,24 +17,11 @@ import javax.annotation.Resource;
  * </p>
  *
  */
-@Service
-@Transactional
-public class LoginService {
-    @Resource
-    private LoginMapper loginMapper;
 
-    private Boolean allowMultipleLogin = true;
+public interface LoginService extends IService<Login> {
+    boolean loginAdd(Login login);
 
-    /**注册*/
-    public Integer loginAdd(Login login){
-        return loginMapper.loginAdd(login);
-    }
-    /**登录及判断用户是否存在*/
-    public Login userLogin(Login login){
-        return loginMapper.userLogin(login);
-    }
-    /**修改登录信息*/
-    public Integer updateLogin(Login login){
-        return loginMapper.updateLogin(login);
-    }
+    Login userLogin(Login login);
+
+    boolean updateLogin(Login login);
 }

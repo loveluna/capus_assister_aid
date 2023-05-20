@@ -1,8 +1,8 @@
 package project.shops;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,7 +44,7 @@ public class ShopsApplicationTests {
         List<Comment> commentsList = commentService.queryComments("1577792919764240135");
         for (Comment comment : commentsList) {
             /**查询对应评论下的回复*/
-            List<Reply> repliesList = replyService.queryReply(comment.getCid());
+            List<Reply> repliesList = replyService.queryReplys(comment.getCid());
             for (Reply reply : repliesList) {
                 /**查询回复者的昵称和头像信息*/
                 UserInfo ruser = userInfoService.queryPartInfo(reply.getRuserid());
@@ -74,7 +74,7 @@ public class ShopsApplicationTests {
         List<Commodity> commodityList = commodityService.queryCommodityByCategory(category);
         for (Commodity commodity : commodityList) {
             /**查询商品对应的其它图片*/
-            List<String> imagesList = commimagesService.LookGoodImages(commodity.getCommid());
+            List<String> imagesList = commimagesService.findImagesByCommId(commodity.getCommid());
             commodity.setOtherimg(imagesList);
         }
         System.out.println(commodityList);
@@ -98,10 +98,11 @@ public class ShopsApplicationTests {
         Integer price = 0;
 
 
-        UserInfo userInfo = userInfoService.LookUserinfo(userid);
+        UserInfo userInfo = userInfoService.lookUserinfo(userid);
         String school = userInfo.getSchool();
-        List<Commodity> commodityList = commodityService.queryAllCommodityByCategory((page - 1) * 10, 10, area, school, category, minmoney, maxmoney);
-        Integer dataNumber = commodityService.queryAllCommodityByCategoryCount(area, school, category, minmoney, maxmoney);
+        IPage<Commodity> commodityIPage = commodityService.queryAllCommodityByCategory(category, minmoney, maxmoney, area, school, (page - 1) * 10, 10);
+        List<Commodity> commodityList = commodityIPage.getRecords();
+        Integer dataNumber = commodityService.queryAllCommodityByCategoryCount(category, minmoney, maxmoney, area, school);
         Integer pages = PageLength.getPages(dataNumber, 10);
 
         System.out.println("排序前的商品为：");

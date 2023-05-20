@@ -29,7 +29,7 @@
                 <li class="layui-nav-item layui-hide-xs" lay-unselect>
                     <a th:href="@{/}" target="_blank" title="前台">
                         <i class="layui-icon layui-icon-website"></i>
-                    </>
+                    </a>
                 </li>
                 <li class="layui-nav-item" lay-unselect>
                     <a href="javascript:;" layadmin-event="refresh" title="刷新">
@@ -211,11 +211,11 @@
     </div>
 </div>
 
-<script th:src="@{/static/layuiadmin/layui/layui.js}"></script>
-<script type="application/javascript" th:src="@{/static/layui/jquery.min.js}"></script>
-<script type="application/javascript" th:src="@{/static/layui/layui.js}"></script>
-<script type="application/javascript" th:src="@{/static/layim/layui/layui.js}"></script>
-<script type="application/javascript" th:src="@{/static/js/admin/layuiim.js}"></script>
+<script th:src="@{/layuiadmin/layui/layui.js}"></script>
+<script type="application/javascript" th:src="@{/layui/jquery.min.js}"></script>
+<script type="application/javascript" th:src="@{/layui/layui.js}"></script>
+<script type="application/javascript" th:src="@{/layim/layui/layui.js}"></script>
+<script type="application/javascript" th:src="@{/js/admin/layuiim.js}"></script>
 <script>
     layui.config({
         base: '../layuiadmin/' //静态资源所在路径

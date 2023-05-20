@@ -66,6 +66,16 @@ public class IndexController {
         return "/user/logreg";
     }
 
+    @GetMapping("/forum_post")
+    @ApiOperation(value = "跳转文章详情",httpMethod = "GET")
+    public String detail(){
+        return "/collaboration";
+    }
+
+    @GetMapping("/article")
+    public String collaborationArticle() {
+        return "/article";
+    }
     /**
      * 用户忘记密码
      * */

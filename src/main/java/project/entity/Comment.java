@@ -1,7 +1,11 @@
 package project.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
@@ -16,18 +20,15 @@ import java.util.List;
  *
  *
  */
-@AllArgsConstructor//全参构造
-@NoArgsConstructor//无参构造
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Accessors(chain = true)//链式写法
-public class Comment implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
+public class Comment extends BaseEntity implements Serializable {
     /**
      * 评论id
      */
-	private String cid;
+    @TableId
+    private String cid;
     /**
      * 商品id
      */
@@ -39,10 +40,12 @@ public class Comment implements Serializable {
     /**
      * 评论者昵称
      */
-	private String cusername;
+    @TableField(exist = false)
+    private String cusername;
     /**
      * 评论者用户头像
      */
+    @TableField(exist = false)
     private String cuimage;
     /**
      * 商品发布者id
@@ -55,7 +58,8 @@ public class Comment implements Serializable {
     /**
      * 评论时间
      */
-	private Date commtime;
+    @TableField(fill = FieldFill.INSERT)
+    private Date commtime;
     /**
      * 0异常 1正常 2删除
      */
@@ -63,5 +67,6 @@ public class Comment implements Serializable {
     /**
      * 评论对应的回复集合
      */
+    @TableField(exist = false)
     private List<Reply> replyLsit;
 }
