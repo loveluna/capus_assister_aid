@@ -26,7 +26,7 @@ var app = new Vue({
                 CoreUtil.sendPost(ctx + "article/add", commentParm, res => {
                     layer.msg(res.msg)
                     location.reload()
-                })
+                });
             }
 
         }

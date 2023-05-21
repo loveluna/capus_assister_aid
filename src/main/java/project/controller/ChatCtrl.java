@@ -88,7 +88,7 @@ public class ChatCtrl {
             return new ResultVo(false, StatusCode.ERROR, "不能对自己的商品感兴趣");
         }
         Friends friends = new Friends().setUserid(userid).setFuserid(fuserid);
-        if (friendsService.justTwoUserIsFriend(friends)) {
+        if (!friendsService.justTwoUserIsFriend(friends)) {
             //如果不存在好友关系插入好友关系
             friendsService.insertFriend(friends);
             friendsService.insertFriend(new Friends().setFuserid(userid).setUserid(fuserid));

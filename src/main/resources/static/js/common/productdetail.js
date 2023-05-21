@@ -1,21 +1,21 @@
-var vcid="";
-var vcuserid="";
-layui.use(['form', 'util','layer','carousel'], function () {
+var vcid = "";
+var vcuserid = "";
+layui.use(['form', 'util', 'layer', 'carousel'], function () {
     var util = layui.util;
     var form = layui.form;
     var layer = layui.layer;
     var carousel = layui.carousel;
     carousel.render({
         elem: '#test1'
-        ,arrow: 'always'
-        ,height: '500px'
+        , arrow: 'always'
+        , height: '500px'
     });
     util.fixbar({
         bar1: false,
         bar2: false,
         bgcolor: "#08BF91",
         css: {
-            right:30,
+            right: 30,
             bottom: 30
         },
         click: function (type) {
@@ -25,9 +25,9 @@ layui.use(['form', 'util','layer','carousel'], function () {
     });
     layer.photos({
         photos: '#layer-photos-demo'
-        ,anim: 5
+        , anim: 5
     });
-    form.on('submit(demo1)', function(data){
+    form.on('submit(demo1)', function (data) {
         $("#subid").addClass("layui-btn-disabled");
         $("#subid").attr("disabled", true);
         var object = new Object();
@@ -64,7 +64,7 @@ layui.use(['form', 'util','layer','carousel'], function () {
                         icon: 1,
                         offset: '100px'
                     });
-                }else {
+                } else {
                     layer.msg(data.message, {
                         time: 1000,
                         icon: 5,
@@ -73,7 +73,7 @@ layui.use(['form', 'util','layer','carousel'], function () {
                 }
                 $("#subid").removeClass("layui-btn-disabled");
                 $("#subid").attr("disabled", false);
-            },error:function () {
+            }, error: function () {
                 layer.msg("系统错误", {
                     time: 1000,
                     icon: 2,
@@ -83,7 +83,7 @@ layui.use(['form', 'util','layer','carousel'], function () {
         });
         return false;
     });
-    form.on('submit(demo2)', function(data){
+    form.on('submit(demo2)', function (data) {
         var object = new Object();
         object["commid"] = goodsid;
         object["spuserid"] = gooduser;
@@ -123,14 +123,14 @@ layui.use(['form', 'util','layer','carousel'], function () {
                         icon: 1,
                         offset: '100px'
                     });
-                }else {
+                } else {
                     layer.msg(data.message, {
                         time: 1000,
                         icon: 5,
                         offset: '100px'
                     });
                 }
-            },error:function () {
+            }, error: function () {
                 layer.msg("系统错误", {
                     time: 1000,
                     icon: 2,
@@ -141,16 +141,17 @@ layui.use(['form', 'util','layer','carousel'], function () {
         return false;
     });
 });
-function ganxingqu() {
-    if(userid==null){
+
+function interested() {
+    if (userid == null) {
         layer.msg("请登录", {
             time: 1000,
             icon: 2,
             offset: '300px'
         });
-    }else{
+    } else {
         $.ajax({
-            url: basePath + "/addfrend/"+gooduser,
+            url: basePath + "/addfrend/" + gooduser,
             data: "",
             contentType: "application/json;charset=UTF-8", //发送数据的格式
             type: "put",
@@ -178,14 +179,14 @@ function ganxingqu() {
                     }, function () {
                         window.open(basePath + "/user/center")
                     });
-                }else {
+                } else {
                     layer.msg(data.message, {
                         time: 2000,
                         icon: 2,
                         offset: '100px'
                     });
                 }
-            },error:function () {
+            }, error: function () {
                 layer.msg("系统错误", {
                     time: 1000,
                     icon: 2,
@@ -195,6 +196,7 @@ function ganxingqu() {
         });
     }
 }
+
 function dianjicllect(colloperates) {
     var object = new Object();
     object["colloperate"] = colloperates;
@@ -233,21 +235,21 @@ function dianjicllect(colloperates) {
                     offset: '100px'
                 });
                 //改变按钮颜色
-                if(colloperates===2){
+                if (colloperates === 2) {
                     $("#shoucang").show();
                     $("#quxiaoshoucang").hide();
-                }else {
+                } else {
                     $("#quxiaoshoucang").show();
                     $("#shoucang").hide();
                 }
-            }else {
+            } else {
                 layer.msg(data.message, {
                     time: 1000,
                     icon: 5,
                     offset: '100px'
                 });
             }
-        },error:function () {
+        }, error: function () {
             layer.msg("系统错误", {
                 time: 1000,
                 icon: 2,
@@ -256,6 +258,7 @@ function dianjicllect(colloperates) {
         }
     });
 }
+
 var app = new Vue({
     el: '#comments',
     data() {
@@ -273,19 +276,19 @@ var app = new Vue({
         lookallcomment: function () {
             var that = this;
             $.ajax({
-                url: basePath + "/comment/query/"+goodsid,
+                url: basePath + "/comment/query/" + goodsid,
                 data: "",
                 contentType: "application/json;charset=UTF-8", //发送数据的格式
                 type: "get",
                 dataType: "json", //回调
                 success: function (data) {
-                    that.listcomments=data.data;
-                    if(that.listcomments.length>0){
+                    that.listcomments = data.data;
+                    if (that.listcomments.length > 0) {
                         $("#havecomment").show();
-                    }else{
+                    } else {
                         $("#nocomment").show();
                     }
-                },error:function () {
+                }, error: function () {
                     layer.msg("系统错误", {
                         time: 1000,
                         icon: 5,
@@ -293,19 +296,19 @@ var app = new Vue({
                     });
                 }
             });
-        },replyuser:function (username,cid,cuserid) {
+        }, replyuser: function (username, cid, cuserid) {
             $("#content").val("");
             $("#subid").hide();
             $("#reply").show();
             $("#content").focus();
-            $('#content').attr('placeholder', '@'+username);
-            vcid=cid;
-            vcuserid=cuserid;
+            $('#content').attr('placeholder', '@' + username);
+            vcid = cid;
+            vcuserid = cuserid;
         }
-    },filters: {
+    }, filters: {
         //timeago.js插件
         //计算时间，类似于几分钟前，几小时前，几天前等
-        changeTime(val){
+        changeTime(val) {
             var time = new Date(val); //先将接收到的json格式的日期数据转换成可用的js对象日期
             return new timeago().format(time, 'zh_CN'); //转换成类似于几天前的格式
         }
@@ -332,11 +335,11 @@ var app = new Vue({
                 type: 'GET',
                 contentType: "application/json;charset=UTF-8",
                 dataType: 'json',
-                success: function(msg) {
-                    if(msg.status === 200) {
+                success: function (msg) {
+                    if (msg.status === 200) {
                         that.latestData = msg.data;
                     }
-                },error:function () {
+                }, error: function () {
                     layer.msg("系统错误", {
                         time: 1000,
                         icon: 5,

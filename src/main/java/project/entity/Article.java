@@ -8,8 +8,12 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import org.springframework.util.StringUtils;
+import project.util.DateUtils;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -86,6 +90,13 @@ public class Article extends BaseEntity implements Serializable {
     @TableField("views_count")
     private Integer viewsCount;
 
+    @TableField(exist = false)
+    private List<String> imgSrcs;
+
+    public List<String> getImgSrcs() {
+        return StringUtils.isEmpty(articleImage) ? Collections.emptyList() : Arrays.asList(articleImage.split("#"));
+    }
+
     /**
      * 文章的评论数
      */
@@ -153,11 +164,19 @@ public class Article extends BaseEntity implements Serializable {
     @TableField(exist = false)
     private List<Comment> comments;
 
+    @TableField(exist = false)
+    private String articleTimeDesc;
+    public String getArticleTimeDesc() {
+        return DateUtils.formatTime(this.createTime.getTime());
+    }
+
     public enum Category {
         QUESTIONS(1),
         TECHNICAL_SHARING(2),
         EVENTS(3),
-        OTHERS(4);
+        OTHERS(4),
+        TEXT_MODULE(5),
+        IMAGE_MODULE(6);
 
         private int value;
 

@@ -40,7 +40,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         LambdaQueryWrapper<Comment> queryWrapper = Wrappers.lambdaQuery();
         queryWrapper.eq(Comment::getCommstatus, 1)
                 .eq(Comment::getCommid, commid)
-                .orderByDesc(Comment::getCommtime);
+                .orderByDesc(Comment::getCreateTime);
         return commentMapper.selectList(queryWrapper); // 调用 commentMapper 的 selectList 方法执行查询
     }
 

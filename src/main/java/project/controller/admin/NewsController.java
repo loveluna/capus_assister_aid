@@ -178,7 +178,7 @@ public class NewsController {
     @ResponseBody
     @ApiOperation(value = "首页网站公告", httpMethod = "GET",response = ResultVo.class)
     public ResultVo newsIndex(@PathVariable("page") Integer page){
-        List<News> newsList = newsService.queryAllNews((page - 1) * 9, 9);
+        List<News> newsList = newsService.queryAllNews(page, 9);
         return new ResultVo(true,StatusCode.OK,"查询成功",newsList);
     }
 

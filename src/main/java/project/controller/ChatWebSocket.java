@@ -24,17 +24,19 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Controller
 @ServerEndpoint(value = "/websocket/{userno}")
-@Api(value = "ChatWebSocket",tags = "聊天功能类")
+@Api(value = "ChatWebSocket", tags = "聊天功能类")
 public class ChatWebSocket {
     // 这里使用静态，让 service 属于类
     private static ChatmsgService chatMsgService;
     private static UserInfoService mineService;
+
     // 注入的时候，给类的 service 注入
     @Autowired
-    public void setChatService(ChatmsgService chatService,UserInfoService mineService) {
-       ChatWebSocket.chatMsgService = chatService;
-       ChatWebSocket.mineService=mineService;
+    public void setChatService(ChatmsgService chatService, UserInfoService mineService) {
+        ChatWebSocket.chatMsgService = chatService;
+        ChatWebSocket.mineService = mineService;
     }
+
     //注入通知类
     @Autowired
     private NoticesService noticesService;
@@ -51,7 +53,7 @@ public class ChatWebSocket {
 
     /**
      * 连接建立成功调用的方法
-     *
+     * <p>
      * session 可选的参数。session为与某个客户端的连接会话，需要通过它来给客户端发送数据
      */
     @OnOpen
@@ -78,17 +80,18 @@ public class ChatWebSocket {
 
 
     /**
-     //给指定的人发消息
+     * //给指定的人发消息
+     *
      * @param session 可选的参数
      */
     @SuppressWarnings("unused")
-	@OnMessage
+    @OnMessage
     public void onMessage(String mine, Session session) {
         JSONObject jsonObject = JSONObject.parseObject(mine);
-        String msgtype=jsonObject.getString("type");
-        if(msgtype.equals("friend")){
+        String msgtype = jsonObject.getString("type");
+        if (msgtype.equals("friend")) {
             sendToUser(jsonObject.toJavaObject(UserInfo.class));
-        }else if(msgtype.equals("group")){
+        } else if (msgtype.equals("group")) {
             sendAll(jsonObject.toJavaObject(UserInfo.class));
         }
     }
@@ -105,7 +108,7 @@ public class ChatWebSocket {
         try {
             if (webSocketSet.get(reviceUserid) != null) {
                 webSocketSet.get(reviceUserid).sendMessage(JSONObject.toJSONString(message));//转成json形式发送出去
-            }else{
+            } else {
                 webSocketSet.get(userno).sendMessage("0");
             }
         } catch (IOException e) {

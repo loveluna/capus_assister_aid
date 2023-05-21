@@ -32,21 +32,11 @@
                             </div>
                         </div>
                         <div class="layui-form-item">
-                            <label class="layui-form-label">验证码</label>
+                            <label class="layui-form-label">请再次输入</label>
                             <div class="layui-input-inline">
-                                <input type="text" name="code" lay-verify="pass" lay-verType="tips"
-                                       autocomplete="off" placeholder="请输入验证码" lay-reqtext="验证码是必填项，岂能为空？" class="layui-input">
-                            </div>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="layui-form-label"></label>
-                            <div class="layui-input-inline">
-                                <label>
-                                    <button type="button" class="layui-btn layui-btn-primary layui-btn-fluid "
-                                            id="LAY-user-getsmscode"
-                                            onclick="getphonecode()">获取短信验证码
-                                    </button>
-                                </label>
+                                <input type="number" id="newPhone" name="oldPhone" lay-verify="required" lay-verType="tips"
+                                       autocomplete="off" placeholder="请输入更换的手机号"
+                                       lay-reqtext="手机号是必填项，岂能为空？" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-form-item" style="margin-top: 30px">

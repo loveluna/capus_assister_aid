@@ -69,8 +69,7 @@ public class SoldrecordServiceImpl extends ServiceImpl<SoldrecordMapper, Soldrec
     @Override
     public Integer querySoldCount(String userId) {
         QueryWrapper<Soldrecord> queryWrapper = new QueryWrapper<>();
-        queryWrapper.select("count(*)")
-                .eq("soldstatus", 1)
+        queryWrapper.eq("soldstatus", 1)
                 .eq(userId != null, "userid", userId);
         return baseMapper.selectCount(queryWrapper);
     }

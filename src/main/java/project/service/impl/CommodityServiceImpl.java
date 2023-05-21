@@ -12,11 +12,14 @@ import project.entity.Commodity;
 import project.mapper.CommodityMapper;
 import project.service.CommodityService;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.List;
 @Service
 @Transactional
 public class CommodityServiceImpl extends ServiceImpl<CommodityMapper, Commodity> implements CommodityService {
+    @Resource
+    private CommodityMapper commodityMapper;
     /**
      * 通过商品名模糊查询商品并按更新时间倒序分页展示
      * @param commname 商品名（模糊查询）

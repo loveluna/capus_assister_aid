@@ -58,7 +58,7 @@
     <div th:include="~{index :: myheader}"></div>
 </header>
 <div class="header-services">
-    <div th:include="~{index :: myhdservices}"></div>
+   <div th:include="~{flea_market  :: myhdservices}"></div>
 </div>
 <main class="ps-main">
     <div class="test">
@@ -121,7 +121,7 @@
                         </h4>
                         <div class="ps-product__shopping">
                             <a class="ps-btn mb-10" style="cursor: pointer"
-                               th:onclick="|ganxingqu()|">感兴趣<i class="ps-icon-next"></i></a>
+                               th:onclick="|interested()|">感兴趣<i class="ps-icon-next"></i></a>
                             <div class="ps-product__actions" id="shoucang"><!--点击收藏-->
                                 <a class="mr-10" onclick="dianjicllect(1)" style="cursor: pointer"><i class="ps-icon-heart"></i></a>
                             </div>
@@ -193,7 +193,7 @@
                                     <div class="ps-review__thumbnail"><img :src="cmm.cuimage" alt=""></div>
                                     <div class="ps-review__content">
                                         <header>
-                                            <p>By&nbsp;<a href="">{{cmm.cusername}}</a>&nbsp;-&nbsp;{{cmm.commtime | changeTime}}
+                                            <p>By&nbsp;<a href="">{{cmm.cusername}}</a>&nbsp;-&nbsp;{{cmm.createTime | changeTime}}
                                                 &nbsp;-&nbsp;<a style="color:#27B574;cursor: pointer"
                                                 @click="replyuser(cmm.cusername,cmm.cid,cmm.cuserid)">回复</a>
                                             </p>
@@ -297,92 +297,15 @@
             </div>
         </div>
     </div>
-    <div class="ps-footer bg--cover" data-background="images/background/parallax.jpg">
-        <div class="ps-footer__content">
-            <div class="ps-container">
-                <div class="row">
-                    <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 ">
-                        <aside class="ps-widget--footer ps-widget--info">
-                            <header><a class="ps-logo" th:href="@{/}"><img th:src="@{/images/logo-white.png}" alt=""></a>
-                                <h3 class="ps-widget__title">Address Office 1</h3>
-                            </header>
-                            <footer>
-                                <p><strong>460 West 34th Street, 15th floor, New York</strong></p>
-                                <p>Email: <a href='mailto:support@store.com'>support@store.com</a></p>
-                                <p>Phone: +323 32434 5334</p>
-                                <p>Fax: ++323 32434 5333</p>
-                            </footer>
-                        </aside>
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 ">
-                        <aside class="ps-widget--footer ps-widget--info second">
-                            <header>
-                                <h3 class="ps-widget__title">Address Office 2</h3>
-                            </header>
-                            <footer>
-                                <p><strong>PO Box 16122 Collins Victoria 3000 Australia</strong></p>
-                                <p>Email: <a href='mailto:support@store.com'>support@store.com</a></p>
-                                <p>Phone: +323 32434 5334</p>
-                                <p>Fax: ++323 32434 5333</p>
-                            </footer>
-                        </aside>
-                    </div>
-                    <div class="col-lg-2 col-md-2 col-sm-4 col-xs-12 ">
-                        <aside class="ps-widget--footer ps-widget--link">
-                            <header>
-                                <h3 class="ps-widget__title">Find Our store</h3>
-                            </header>
-                            <footer>
-                                <ul class="ps-list--link">
-                                    <li><a href="#">Coupon Code</a></li>
-                                    <li><a href="#">SignUp For Email</a></li>
-                                    <li><a href="#">Site Feedback</a></li>
-                                    <li><a href="#">Careers</a></li>
-                                </ul>
-                            </footer>
-                        </aside>
-                    </div>
-                    <div class="col-lg-2 col-md-2 col-sm-4 col-xs-12 ">
-                        <aside class="ps-widget--footer ps-widget--link">
-                            <header>
-                                <h3 class="ps-widget__title">Get Help</h3>
-                            </header>
-                            <footer>
-                                <ul class="ps-list--line">
-                                    <li><a href="#">Order Status</a></li>
-                                    <li><a href="#">Shipping and Delivery</a></li>
-                                    <li><a href="#">Returns</a></li>
-                                    <li><a href="#">Payment Options</a></li>
-                                    <li><a href="#">Contact Us</a></li>
-                                </ul>
-                            </footer>
-                        </aside>
-                    </div>
-                    <div class="col-lg-2 col-md-2 col-sm-4 col-xs-12 ">
-                        <aside class="ps-widget--footer ps-widget--link">
-                            <header>
-                                <h3 class="ps-widget__title">Products</h3>
-                            </header>
-                            <footer>
-                                <ul class="ps-list--line">
-                                    <li><a href="#">Shoes</a></li>
-                                    <li><a href="#">Clothing</a></li>
-                                    <li><a href="#">Accessries</a></li>
-                                    <li><a href="#">Football Boots</a></li>
-                                </ul>
-                            </footer>
-                        </aside>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="ps-footer bg--cover" >
+        <div th:include="~{index :: myFooter}"></div>
     </div>
 </main>
 <!-- JS Library-->
 <script type="text/javascript" th:src="@{/plugins/bootstrap/bootstrap.min.js}"></script>
 <script type="text/javascript" th:src="@{/plugins/jquery.barrating.min.js}"></script>
 <script type="text/javascript" th:src="@{/plugins/owl-carousel/owl.carousel.min.js}"></script>
-<script type="text/javascript" th:src="@{/plugins/gmap3.min.js}"></script>
+
 <script type="text/javascript" th:src="@{/plugins/imagesloaded.pkgd.js}"></script>
 <script type="text/javascript" th:src="@{/plugins/isotope.pkgd.min.js}"></script>
 <script type="text/javascript" th:src="@{/plugins/bootstrap-select.min.js}"></script>

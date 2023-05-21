@@ -34,6 +34,22 @@ public class IndexController {
         return "/common/contacts";
     }
 
+    @GetMapping("/campus_assistance")
+    @ApiOperation(value = "跳转联系我们",httpMethod = "GET")
+    public String campusAssistance(){
+        return "/campus_assistance";
+    }
+
+    /**
+     * 跳蚤市场
+     * */
+    @GetMapping("/flea_market")
+    @ApiOperation(value = "跳蚤市场",httpMethod = "GET")
+    public String fleaMarket(){
+        return "/flea_market";
+    }
+
+
     /**
      * 关于我们
      * */
@@ -101,6 +117,15 @@ public class IndexController {
     @ApiOperation(value = "跳转个人主页",httpMethod = "GET")
     public String userhome(){
         return "/user/user-home";
+    }
+
+    /**
+     * 发布求助信息
+     */
+    @GetMapping("/public/assist")
+    @ApiOperation(value = "发布求助信息",httpMethod = "GET")
+    public String publicAssist(){
+        return "/common/assist";
     }
 
     /**
@@ -237,4 +262,5 @@ public class IndexController {
     public String adminNews(){
         return "/admin/news/newslist";
     }
+
 }

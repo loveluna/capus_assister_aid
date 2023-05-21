@@ -3,11 +3,10 @@ package project.entity;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import project.util.DateUtils;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -59,7 +58,7 @@ public class Comment extends BaseEntity implements Serializable {
      * 评论时间
      */
     @TableField(fill = FieldFill.INSERT)
-    private Date commtime;
+    private Date createTime;
     /**
      * 0异常 1正常 2删除
      */
@@ -69,4 +68,13 @@ public class Comment extends BaseEntity implements Serializable {
      */
     @TableField(exist = false)
     private List<Reply> replyLsit;
+
+    @TableField(exist = false)
+    private String articleTimeDesc;
+    public String getArticleTimeDesc() {
+        if (this.createTime != null) {
+            return DateUtils.formatTime(this.createTime.getTime());
+        }
+        return "";
+    }
 }

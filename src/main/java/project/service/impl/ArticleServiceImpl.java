@@ -128,4 +128,33 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         wrapper.setSql("views_count = views_count + 1");
         return update(wrapper);
     }
+
+    @Override
+    public ArticleRespVO  getArticlesWithCagetory(String userId) {
+        ArticleRespVO articleRespVO = new ArticleRespVO();
+        UserInfo userInfo = Optional.ofNullable(userInfoService.getById(userId)).orElseThrow(()->new BusinessException(NOT_ACCESS));
+        // 构建查询条件
+        QueryWrapper<Article> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("article_type", LIFE_MODULE)
+                .eq("status", 0)
+                .in("category", Arrays.asList(TEXT_MODULE.getValue(),
+                        IMAGE_MODULE.getValue()));
+
+        // 查询符合条件的文章
+        List<Article> articleList = articleMapper.selectList(queryWrapper);
+        for (Article article:articleList) {
+            List<Comment> comments = commentService.queryComments(article.getArticleId());
+
+            comments = Optional.ofNullable(comments).orElse(Collections.emptyList());
+            comments = comments.stream().peek(comment -> {
+                UserInfo user = userInfoService.queryPartInfo(comment.getCuserid());
+                comment.setCuimage(user.getUimage());
+                comment.setCusername(user.getUsername());
+            }).collect(Collectors.toList());
+            article.setComments(comments);
+        }
+        articleRespVO.setArticles(articleList);
+        articleRespVO.setUserInfo(userInfo);
+        return articleRespVO;
+    }
 }

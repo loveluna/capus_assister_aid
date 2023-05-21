@@ -2,6 +2,7 @@ package project.controller;
 
 
 import project.service.*;
+import project.util.DataResult;
 import project.util.KeyUtil;
 import project.util.StatusCode;
 import project.vo.ResultVo;
@@ -140,19 +141,19 @@ public class CommentReplyController {
      * 3.删除评论及评论对应的回复
      */
     @ResponseBody
-    @PutMapping("/comment/delete/{cid}")
-    @ApiOperation (value = "删除评论",httpMethod = "POST",response = ResultVo.class)
-    public ResultVo deletecomment(@PathVariable("cid") String cid,HttpSession session){
+    @GetMapping("/comment/delete/{cid}")
+    @ApiOperation (value = "删除评论",httpMethod = "POST",response = DataResult.class)
+    public DataResult deletecomment(@PathVariable("cid") String cid, HttpSession session){
         String cuserid = (String) session.getAttribute("userid");
         Comment comment = commentService.queryById(cid);
         /**如果是评论者本人或者商品发布者则进行删除操作*/
         if (comment.getCuserid().equals(cuserid) || comment.getSpuserid().equals(cuserid)){
-            if (commentService.deleteComment(cid) && replyService.deleteReply(new Reply().setCid(cid))){
-                return new ResultVo(true, StatusCode.OK,"删除成功");
+            if (commentService.deleteComment(cid) || replyService.deleteReply(new Reply().setCid(cid))){
+                return DataResult.success("删除成功");
             }
-            return new ResultVo(false, StatusCode.ERROR,"删除失败");
+            return DataResult.fail("删除成功");
         }
-        return new ResultVo(false,StatusCode.ACCESSERROR,"禁止操作");
+        return DataResult.fail("禁止操作");
     }
 
     /**

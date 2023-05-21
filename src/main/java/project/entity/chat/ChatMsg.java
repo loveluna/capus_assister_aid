@@ -1,5 +1,7 @@
 package project.entity.chat;
 
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,6 +16,7 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Accessors(chain = true)//链式写法
+@TableName("chatmsg")
 public class ChatMsg extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -21,6 +24,7 @@ public class ChatMsg extends BaseEntity implements Serializable {
     /**
      * 发送者id
      */
+    @TableId
 	private String senduserid;
     /**
      * 接收者id

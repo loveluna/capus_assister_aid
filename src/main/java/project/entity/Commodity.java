@@ -2,6 +2,7 @@ package project.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -27,6 +28,7 @@ public class Commodity extends BaseEntity implements Serializable {
     /**
      * 商品id
      */
+    @TableId
     private String commid;
     /**
      * 商品名
@@ -65,6 +67,7 @@ public class Commodity extends BaseEntity implements Serializable {
     /**
      * 结束时间
      */
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date endtime;
     /**
      * 0违规 1正常 2删除  3待审核
@@ -77,10 +80,12 @@ public class Commodity extends BaseEntity implements Serializable {
     /**
      * 常用类别字段
      * */
+    @TableField(exist = false)
     private String common2;
     /**
      * 商品其他图集合
      * */
+    @TableField(exist = false)
     private List<String> otherimg;
 
     /**

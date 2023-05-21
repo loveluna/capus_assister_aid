@@ -55,11 +55,7 @@ public class SoldrecordController {
     @ApiOperation(value = "返回用户所有售出记录", httpMethod = "GET", response = LayuiPageVo.class)
     public LayuiPageVo LookUserSold(int limit, int page, HttpSession session) {
         String userid = (String) session.getAttribute("userid");
-        //如果未登录，给一个假id
-        if (StringUtils.isEmpty(userid)) {
-            userid = "123456";
-        }
-        List<Soldrecord> soldrecordList = soldrecordService.queryAllSoldrecord(userid, (page - 1) * limit, limit);
+        List<Soldrecord> soldrecordList = soldrecordService.queryAllSoldrecord(userid, page, limit);
         Integer dataNumber = soldrecordService.querySoldCount(userid);
         return new LayuiPageVo("", 0, dataNumber, soldrecordList);
     }
@@ -73,7 +69,7 @@ public class SoldrecordController {
     @GetMapping("/soldrecord/queryall")
     @ApiOperation(value = "返回全部的售出记录", httpMethod = "PUT", response = LayuiPageVo.class)
     public LayuiPageVo queryAllSold(int limit, int page) {
-        List<Soldrecord> soldrecordList = soldrecordService.queryAllSoldrecord(null, (page - 1) * limit, limit);
+        List<Soldrecord> soldrecordList = soldrecordService.queryAllSoldrecord(null, page, limit);
         Integer dataNumber = soldrecordService.querySoldCount(null);
         return new LayuiPageVo("", 0, dataNumber, soldrecordList);
     }

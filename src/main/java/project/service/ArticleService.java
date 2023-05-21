@@ -32,4 +32,6 @@ public interface ArticleService  extends IService<Article> {
     ArticleRespVO selectCommentsByArticleId(String articleId, String userId);
 
     boolean updateViewsById(String articleId);
+
+    ArticleRespVO  getArticlesWithCagetory(String userId);
 }

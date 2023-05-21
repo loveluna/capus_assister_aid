@@ -9,6 +9,8 @@
     <title>学习互助</title>
     <!-- Fonts-->
     <link rel="stylesheet" th:href="@{/css/fontsgoogleapis.css}">
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}"/>
+
     <!-- CSS Library-->
     <link th:href="@{/plugins/bootstrap/bootstrap.min14ed.css?v=3.3.6}" rel="stylesheet">
     <link th:href="@{/plugins/font-awesome/css/font-awesome.min93e3.css?v=4.4.0}" rel="stylesheet">
@@ -62,7 +64,7 @@
                                             </a>
                                             <div class="media-body">
                                                 <a href="#">{{ comment.cusername }}</a>
-                                                <small class="text-muted">{{ comment.commtime | changeTime }}</small>
+                                                <small class="text-muted">{{ comment.createTime | changeTime }}</small>
                                             </div>
                                         </div>
                                         <div class="social-body">
@@ -97,20 +99,6 @@
     <script th:src="@{/js/common/core.util.js}"></script>
     <script th:inline="javascript" type="text/javascript">
         var ctx = '[[@{/}]]'.replaceAll("\"", "").replace('//', '/');
-
-        function addComment() {
-            const content = this.newComment.trim()
-            if (content !== '') {
-                const commentParm = {
-                    commentOnId: this.article.articleId,
-                    content: content
-                }
-                CoreUtil.sendPost(ctx + article / add, commentParm, res => {
-                    layer.msg(res.msg)
-                    location.reload()
-                })
-            }
-        }
     </script>
     <script type="text/javascript" th:src="@{/js/timeago.js}"></script>
     <script th:src="@{/js/common/article.js}"></script>

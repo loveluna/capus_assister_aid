@@ -11,12 +11,14 @@ import project.entity.News;
 import project.mapper.NewsMapper;
 import project.service.NewsService;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 @Service
 @Transactional
 public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements NewsService {
-
+    @Resource
+    private NewsMapper newsMapper;
     /**
      * 发布公告
      *
@@ -97,12 +99,13 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements Ne
      */
     @Override
     public List<News> queryAllNews(Integer page, Integer count) {
-        LambdaQueryWrapper<News> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.select(News::getId, News::getNewstitle, News::getImage, News::getNewsdesc, News::getUsername, News::getCreatetime, News::getRednumber)
-                .eq(News::getNewsstatus, 1)
-                .orderByDesc(News::getCreatetime)
-                .last("LIMIT " + (page - 1) * count + ", " + count);
-        return baseMapper.selectList(queryWrapper);
+        int offset = (page - 1) * count;
+        QueryWrapper<News> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("id", "newstitle", "image", "newsdesc", "username", "createtime", "rednumber")
+                .eq("newsstatus", 1)
+                .orderByDesc("createtime")
+                .last("LIMIT " + offset + ", " + count);
+        return newsMapper.selectList(queryWrapper);
     }
 
     /**
@@ -113,8 +116,7 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements Ne
     @Override
     public Integer LookNewsCount() {
         QueryWrapper<News> queryWrapper = new QueryWrapper<>();
-        queryWrapper.select("count(*)")
-                .eq("newsstatus", 1);
+        queryWrapper.eq("newsstatus", 1);
         return baseMapper.selectCount(queryWrapper);
     }
 
