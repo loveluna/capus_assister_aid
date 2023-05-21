@@ -13,6 +13,7 @@ import project.mapper.ArticleMapper;
 import project.service.ArticleService;
 import project.service.CommentService;
 import project.service.UserInfoService;
+import project.util.KeyUtil;
 import project.vo.ArticleRespVO;
 
 import javax.annotation.Resource;
@@ -132,7 +133,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     @Override
     public ArticleRespVO  getArticlesWithCagetory(String userId) {
         ArticleRespVO articleRespVO = new ArticleRespVO();
-        UserInfo userInfo = Optional.ofNullable(userInfoService.getById(userId)).orElseThrow(()->new BusinessException(NOT_ACCESS));
+        UserInfo userInfo = userInfoService.getById(userId);
         // 构建查询条件
         QueryWrapper<Article> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("article_type", LIFE_MODULE)
@@ -156,5 +157,19 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         articleRespVO.setArticles(articleList);
         articleRespVO.setUserInfo(userInfo);
         return articleRespVO;
+    }
+
+    @Override
+    public boolean saveArticles(String userId, Article article) {
+        UserInfo userInfo = userInfoService.getById(userId);
+        if (userInfo == null) {
+            return false;
+        }
+        article.setCreateTime(new Date());
+        article.setArticleId(KeyUtil.genUniqueKey());
+        article.setUserId(userInfo.getUserid());
+        article.setUserName(userInfo.getUsername());
+        article.setUserImage(userInfo.getUimage());
+        return articleMapper.insert(article) > 0;
     }
 }

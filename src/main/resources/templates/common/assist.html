@@ -8,110 +8,305 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/userInfo/relgoods.css}"/>
     <script type="text/javascript" th:src="@{/layui/jquery.min.js}"></script>
     <script type="text/javascript" th:src="@{/js/vue.js}"></script>
+    <link rel="stylesheet" type="text/css" th:src="@{/css/simditor.css}" />
+    <link th:href="@{/plugins/bootstrap/bootstrap.min14ed.css?v=3.3.6}" rel="stylesheet">
+    <link th:href="@{/plugins/font-awesome/css/font-awesome.min93e3.css?v=4.4.0}" rel="stylesheet">
+    <link th:href="@{/css/animate.min.css}" rel="stylesheet">
+    <link th:href="@{/css/style.min862f.css?v=4.1.0}" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/simditor.css}"/>
     <title>校园互助平台 | 发布文章</title>
     <script th:inline="javascript">
         var basePath = [[${#httpServletRequest.getScheme() + "://" + #httpServletRequest.getServerName() + ":" + #httpServletRequest.getServerPort() + #httpServletRequest.getContextPath()}]];
     </script>
 </head>
-<body style="background-color:white">
-<form class="layui-form" id="goodsform" style="margin-top: 10px">
-    <div class="layui-form-item">
-        <label class="layui-form-label"><span style="color: red">*</span>商品名称</label>
-        <div class="layui-input-block">
-            <input type="text" name="commname" lay-verify="required" autocomplete="off" placeholder="请输入商品名称"
-                   class="layui-input">
+<body class="gray-bg">
+    <form class="layui-form" id="article" style="margin-top: 10px">
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label"><span style="color: red">*</span>主题</label>
+            <div class="layui-input-block">
+                <textarea placeholder="求助主题" name="topic" lay-verify="required" autocomplete="off"
+                          class="layui-textarea"></textarea>
+            </div>
         </div>
-    </div>
-    <div class="layui-form-item layui-form-text">
-        <label class="layui-form-label"><span style="color: red">*</span>商品描述</label>
-        <div class="layui-input-block">
-            <textarea placeholder="请输入商品描述(品牌型号，新旧程度，入手渠道，转手原因...)" name="commdesc" lay-verify="required" autocomplete="off"
-                      class="layui-textarea"></textarea>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span style="color: red">*</span>类型</label>
+            <div class="layui-input-block">
+                <select name="articleType" lay-filter="required" onchange="handleTypeChange(this)">
+                    <option value="0" selected="">学习互助</option>
+                    <option value="1">生活互助</option>
+                </select>
+            </div>
         </div>
-    </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">商品视频</label>
-        <div class="layui-inline">
-            <button type="button" class="layui-btn" id="test1">上传视频</button>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span style="color: red">*</span>类别</label>
+            <div class="layui-input-block">
+                <input type="radio" name="category" value="1" title="课程问答" checked="">
+                <input type="radio" name="category" value="2" title="技术分享">
+                <input type="radio" name="category" value="3" title="学习活动建议">
+                <input type="radio" name="category" value="4" title="其他">
+            </div>
         </div>
-    </div>
-    <div class="videosamplex" id="videosamplex" style="width:600px;height:400px;margin-left:100px;margin-bottom:15px;display: none">
-        <video id="videoplayer"></video>
-    </div>
-    <div class="layui-form-item layui-form-text">
-        <label class="layui-form-label">商品原价</label>
-        <div class="layui-input-block">
-            <input type="number" name="orimoney" autocomplete="off" placeholder="请输入商品原价"
-                   class="layui-input">
+        <div class="layui-form-item">
+            <label class="layui-form-label">图片</label>
+            <div class="layui-inline">
+                <button type="button" class="layui-btn" id="test3">上传图片（最多3张）</button>
+            </div>
         </div>
-    </div>
-    <div class="layui-form-item layui-form-text">
-        <label class="layui-form-label"><span style="color: red">*</span>商品售价</label>
-        <div class="layui-input-block">
-            <input type="number" name="thinkmoney" lay-verify="required" autocomplete="off" placeholder="请输入商品售价"
-                   class="layui-input">
+        <div id="otherimages" style="margin-top:0px;display: none;margin-left:100px;margin-bottom:10px">
+            <div class="imgDiv" v-for="(img,index) in listimages"
+                 :key="index" :id="'img'+index" @mouseover="mouseOver(index)" @mouseleave="mouseLeave(index)">
+                <img :src="img.imgsrc" style="width:300px;height:200px;cursor: pointer"
+                     @click="openimg(img.imgsrc)">
+                <img th:src="@{/images/close.png}" class="delete"
+                     @click="delimage(index)" :id="'del'+index" style="cursor: pointer">
+            </div>
         </div>
-    </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label"><span style="color: red">*</span>商品类别</label>
-        <div class="layui-input-block">
-            <select name="category" lay-filter="required">
-                <option value="3C数码" selected="">3C数码</option>
-                <option value="书籍">书籍</option>
-                <option value="生活用品">生活用品</option>
-                <option value="服饰">服饰</option>
-                <option value="美妆">美妆</option>
-                <option value="出行">出行</option>
-                <option value="其他">其他</option>
-            </select>
+        <div id="mainimage" style="display: none;margin-left:100px;margin-bottom:10px">
+            <img :src="mainimg" style="width:300px;height:200px;cursor: pointer" id="imageurl"
+                 @click="openimg(mainimg)">
         </div>
-    </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label"><span style="color: red">*</span>常用选项</label>
-        <div class="layui-input-block">
-            <input type="radio" name="common" value="不议价" title="不议价" checked="">
-            <input type="radio" name="common" value="可小刀" title="可小刀">
-            <input type="radio" name="common2" value="可送货" title="可送货" checked="">
-            <input type="radio" name="common2" value="仅自提" title="仅自提">
+        <div class="wrapper wrapper-content">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <h5>求助内容</h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="form_editors.html#">
+                                    <i class="fa fa-wrench"></i>
+                                </a>
+                                <ul class="dropdown-menu dropdown-user">
+                                </ul>
+                                <a class="close-link">
+                                    <i class="fa fa-times"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content">
+
+                        <textarea id="editor" name="articleContent" placeholder="这里输入内容" autofocus lay-filter="required">
+                        </textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label"><span style="color: red">*</span>商品主图</label>
-        <div class="layui-inline">
-            <button type="button" class="layui-btn" id="test2">上传主图</button>
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <div class="layui-input-block" style="color:#C62F2F">
+                <p>温馨提示：请勿发布涉及政治、广告、营销、违反国家法律法规的文章。</p>
+            </div>
         </div>
-    </div>
-    <div id="mainimage" style="display: none;margin-left:100px;margin-bottom:10px">
-        <img :src="mainimg" style="width:300px;height:200px;cursor: pointer" id="imageurl"
-             @click="openimg(mainimg)">
-    </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label"><span style="color: red">*</span>商品其他图</label>
-        <div class="layui-inline">
-            <button type="button" class="layui-btn" id="test3">上传其他图（最多3张）</button>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="submit" class="layui-btn" lay-submit="" id="submit" lay-filter="submit">立即提交</button>
+            </div>
         </div>
-    </div>
-    <div id="otherimages" style="margin-top:0px;display: none;margin-left:100px;margin-bottom:10px">
-        <div class="imgDiv" v-for="(img,index) in listimages"
-             :key="index" :id="'img'+index" @mouseover="mouseOver(index)" @mouseleave="mouseLeave(index)">
-            <img :src="img.imgsrc" style="width:300px;height:200px;cursor: pointer"
-                 @click="openimg(img.imgsrc)">
-            <img th:src="@{/images/close.png}" class="delete"
-                 @click="delimage(index)" :id="'del'+index" style="cursor: pointer">
-        </div>
-    </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label"></label>
-        <div class="layui-input-block" style="color:#C62F2F">
-            <p>温馨提示：请勿发布涉及政治、广告、营销、违反国家法律法规等商品。</p>
-        </div>
-    </div>
-    <div class="layui-form-item">
-        <div class="layui-input-block">
-            <button type="submit" class="layui-btn" lay-submit="" id="demo1" lay-filter="demo1">立即提交</button>
-        </div>
-    </div>
-</form>
+    </form>
 </body>
 <script type="text/javascript" th:src="@{/layui/layui.js}"></script>
+<script th:src="@{/layui/jquery.min.js?v=2.1.4}"></script>
+<script th:src="@{/js/bootstrap.min.js?v=3.3.6}"></script>
+<script th:src="@{/js/content.min.js?v=1.0.0}"></script>
+<script type="text/javascript" th:src="@{/plugins/module.js}"></script>
+<script type="text/javascript" th:src="@{/plugins/uploader.js}"></script>
+<script type="text/javascript" th:src="@{/plugins/hotkeys.js}"></script>
+<script type="text/javascript" th:src="@{/plugins/simditor.js}"></script>
+<script th:src="@{/js/common/core.util.js}"></script>
+<script>
+    $(document).ready(function(){var editor=new Simditor({textarea:$("#editor"),defaultImage:"../static/images/pic/a9.jpg"})});
+    layui.use(['form', 'upload', 'element'], function () {
+        var upload = layui.upload;
+        var form = layui.form;
+        upload.render({
+            elem: '#test3'
+            , url: basePath + '/relgoods/images'
+            , accept: 'images' //图片
+            , size: 1024 * 20
+            , exts: 'png|jpg'
+            , multiple: true
+            , number: 3
+            , choose: function (obj) {
+                //上传前判断已经上传了多少张图片
+                var imgs = document.getElementById("otherimages").getElementsByTagName("img");
+                if (imgs.length === 6) {
+                    layer.msg('最多上传三张图片');
+                    layer.close(obj);//报错让其停止上传
+                }
+            }
+            , progress: function (n) {
+                var percent = n + '%';
+                layer.msg(percent, {
+                    icon: 16
+                    , shade: 0.01
+                });
+            }
+            , done: function (res) {
+                //如果上传失败
+                if (res.code > 0) {
+                    return layer.msg('上传失败');
+                } else {
+                    layer.closeAll('loading');
+                    layer.msg('上传成功', {
+                        time: 1000,
+                        icon: 1,
+                        offset: '150px'
+                    });
+                    showlistimages(res.data.src[0]);
+                    $("#otherimages").show();
+                }
+            }
+            , error: function () {
+                layer.closeAll('loading');
+                layer.msg('上传失败', {
+                    time: 1000,
+                    icon: 2,
+                    offset: '150px'
+                });
+            }
+        });
+        upload.render({
+            elem: '#test2'
+            , url: basePath + '/relgoods/video'
+            , accept: 'images' //图片
+            , size: 1024 * 20
+            , exts: 'png|jpg'
+            , progress: function (n) {
+                var percent = n + '%'; //获取进度百分比
+                layer.msg(percent, {
+                    icon: 16
+                    , shade: 0.01
+                });
+            }
+            , done: function (res) {
+                //如果上传失败
+                if (res.code > 0) {
+                    return layer.msg('上传失败');
+                } else {
+                    layer.closeAll('loading');
+                    layer.msg('上传成功', {
+                        time: 1000,
+                        icon: 1,
+                        offset: '150px'
+                    });
+                    setmainimgurl(res.data.src);
+                    $("#mainimage").show();
+                }
+            }
+            , error: function () {
+                layer.closeAll('loading');
+                layer.msg('上传失败', {
+                    time: 1000,
+                    icon: 2,
+                    offset: '150px'
+                });
+            }
+        });
+    });
+
+    layui.use(['form'], function () {
+        var form = layui.form;
+        form.on('submit(submit)', function (data) {
+            var object = new Object();
+            object["topic"] =  $('textarea[name="topic"]').val();
+            object["articleType"] = $('select[name="articleType"]').val();
+            object["category"] =  $('input[name="category"]:checked').val();
+            // 获取 Simditor 编辑器中的内容
+            var articleContentValue = $('#editor').val();
+            // 将编辑器中的内容赋值给 object 对象的 articleContent 属性
+            object['articleContent'] = articleContentValue;
+            CoreUtil.sendPost("/article/create", object, res => {
+                layer.closeAll('loading');
+            });
+        });
+    });
+
+    var app = new Vue({
+        el: '#article',
+        data() {
+            return {
+                listimages: [],
+                mainimg: "",
+                videourl: ""
+            }
+        },
+        mounted: function () {
+            //将vue中的函数设置成全局的
+            window.showlistimages = this.showlistimages;
+            window.setmainimgurl = this.setmainimgurl;
+            window.setvideourl = this.setvideourl;
+
+            window.getlistimages = this.getlistimages;
+            window.getmainimgurl = this.getmainimgurl;
+            window.getvideourl = this.getvideourl;
+        },
+        methods: {
+            showlistimages: function (imgurl) {
+                var that = this;
+                if (that.listimages.length !== 3) {
+                    var object = new Object();
+                    object["imgsrc"] = imgurl;
+                    that.listimages.push(object);//向vue数组中添加图片
+                }
+            },getlistimages: function () {
+                var that = this;
+                return that.listimages;
+            },setmainimgurl: function (imgurl) {
+                var that = this;
+                that.mainimg = imgurl;
+            },getmainimgurl: function () {
+                var that = this;
+                return that.mainimg;
+            },setvideourl: function (videosrc) {
+                var that = this;
+                that.videourl = videosrc;
+            },getvideourl: function () {
+                var that = this;
+                return that.videourl;
+            },delimage: function (ids) {
+                var that = this;
+                that.listimages.splice(ids, 1);//从vue数组中删除此图
+            },mouseOver: function (id) {
+                $("#del" + id).show();
+            }, mouseLeave: function (id) {
+                $("#del" + id).hide();
+            },openimg: function (imgsrc) {
+                var img = '<img src="' + imgsrc + '" style="width:100%;height:100%">';
+                layer.open({
+                    type: 1,
+                    title: false,
+                    shade: 0.6,
+                    closeBtn: 0, //不显示关闭按钮
+                    anim: 2,
+                    shadeClose: true, //开启遮罩关闭
+                    content: img
+                });
+            }
+        }
+    });
+
+    function handleTypeChange(select) {
+        var type = select.value;
+        var otherImagesDiv = document.getElementById("otherimages");
+        var mainImageDiv = document.getElementById("mainimage");
+        var categoryDiv = document.querySelector(".layui-form-item:last-child");
+
+        if (type === "0") {
+            otherImagesDiv.style.display = "block";
+            mainImageDiv.style.display = "none";
+        } else if (type === "1") {
+            otherImagesDiv.style.display = "none";
+            mainImageDiv.style.display = "block";
+        }
+
+        if (type === "0" || type === "1") {
+            categoryDiv.style.display = "block";
+        } else {
+            categoryDiv.style.display = "none";
+        }
+    }
+</script>
 </html>

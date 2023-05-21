@@ -1,13 +1,13 @@
 package project.controller;
 
 
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
@@ -63,10 +63,10 @@ public class CommodityController {
     @ApiOperation(value = "跳转发布商品", httpMethod = "GET")
     @GetMapping("/user/relgoods")
     public String torelgoods(HttpSession session) {
-        /*String userid = (String)session.getAttribute("userid");
+        String userid = (String)session.getAttribute("userid");
         if(userid==null){
             return "redirect:/:";
-        }*/
+        }
         return "/user/product/relgoods";
     }
 
@@ -170,7 +170,7 @@ public class CommodityController {
             //id与filename保持一直，删除文件
             String fileNameNew = UUID.randomUUID().toString().replace("-", "") + getFileType(fileName);
             String newFilePathName = newPath + fileNameNew;
-            String url = fileUploadProperties.getUrl() + "/" + createTime + "/" + fileNameNew;
+            String url = fileUploadProperties.getUrl() + fileNameNew;
             //创建输出文件对象
             File outFile = new File(newFilePathName);
             //拷贝文件到输出文件对象
@@ -191,8 +191,8 @@ public class CommodityController {
     @ApiOperation(value = "上传其他照片", httpMethod = "POST", response = DataResult.class)
     public DataResult relgoodsimages(@RequestParam(value = "file", required = false) MultipartFile[] files) throws IOException {
         // 存储文件夹
-        String createTime = DateUtils.format(new Date(), DateUtils.DATEPATTERN);
-        String uploadDirectoryPath = fileUploadProperties.getPath() + createTime + File.separator;
+        // 获取项目的资源文件路径
+        String uploadDirectoryPath = fileUploadProperties.getPath() + File.separator;
         File uploadDirectory = new File(uploadDirectoryPath);
         if (!uploadDirectory.exists()) {
             uploadDirectory.mkdirs();
@@ -206,7 +206,7 @@ public class CommodityController {
                 String fileExtension = getFileType(fileName);
                 String newFileName = UUID.randomUUID().toString().replace("-", "") + fileExtension;
                 String newFilePath = uploadDirectoryPath + newFileName;
-                String imageUrl = fileUploadProperties.getUrl() + "/" + createTime + "/" + newFileName;
+                String imageUrl = fileUploadProperties.getUrl() + newFileName;
                 // 创建输出文件对象
                 File outFile = new File(newFilePath);
                 // 拷贝文件到输出文件对象

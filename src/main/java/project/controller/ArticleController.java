@@ -3,6 +3,7 @@ package project.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
+import project.entity.Article;
 import project.entity.Comment;
 import project.entity.Report;
 import project.service.ArticleService;
@@ -71,4 +72,12 @@ public class ArticleController {
         }
         return DataResult.success("举报的信息已在处理中...");
     }
+
+    @PostMapping("/create")
+    @ApiOperation(value = "创建文章")
+    public DataResult report(HttpSession session, @RequestBody Article article) {
+        String userId = (String) session.getAttribute("userid");
+        return articleService.saveArticles(userId, article) ? DataResult.success("保存成功") : DataResult.fail("保存失败");
+    }
+
 }

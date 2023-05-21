@@ -34,4 +34,6 @@ public interface ArticleService  extends IService<Article> {
     boolean updateViewsById(String articleId);
 
     ArticleRespVO  getArticlesWithCagetory(String userId);
+
+    boolean saveArticles(String userId, Article article);
 }

@@ -23,7 +23,7 @@ spring:
           url: jdbc:sqlserver://localhost:1433;databaseName=company_project
 file:
   #文件上传目录 绝对路径 末尾请加 /
-  path: C:/files/ #windows
+  path: classpath:/static/images/pic/
   #path: /data/files/ #linux
   #文件预览、下载的url, 末尾请勿加 /
-  url: http://localhost:80/files
+  url: http://localhost:80/images/pic

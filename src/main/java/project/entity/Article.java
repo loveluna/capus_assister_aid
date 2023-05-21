@@ -61,7 +61,7 @@ public class Article extends BaseEntity implements Serializable {
     private String userImage;
 
     /**
-     * 文章类型，0 表示普通文章，1 表示转发，2 表示关注
+     * 文章类型
      */
     @TableField("article_type")
     private String articleType;
