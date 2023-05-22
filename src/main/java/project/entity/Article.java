@@ -134,16 +134,16 @@ public class Article extends BaseEntity implements Serializable {
     private String topic;
 
     /**
+     * 文章简介
+     */
+    @TableField("article_desc")
+    private Boolean articleDesc;
+
+    /**
      * 文章类型
      */
     @TableField("category")
     private int category;
-
-    /**
-     * 文章是否为长微博，1 表示是，0 表示否
-     */
-    @TableField("is_long")
-    private Boolean isLong;
 
     /**
      * 用户对文章的态度，例如：赞、踩、中立等

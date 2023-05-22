@@ -122,7 +122,7 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport {
         registry.addResourceHandler("/webjars/**").addResourceLocations(
                 "classpath:/META-INF/resources/webjars/");
         registry.addResourceHandler(fileUploadProperties.getAccessUrl())
-                .addResourceLocations("file:" + fileUploadProperties.getPath());
+                .addResourceLocations("classpath:/static/images/pic/");
     }
 
 

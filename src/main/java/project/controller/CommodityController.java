@@ -30,6 +30,10 @@ import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 /**
@@ -155,26 +159,22 @@ public class CommodityController {
     @ResponseBody
     public DataResult relgoodsvideo(@RequestParam(value = "file", required = false) MultipartFile file) throws IOException {
         //存储文件夹
-        String createTime = DateUtils.format(new Date(), DateUtils.DATEPATTERN);
-        String newPath = fileUploadProperties.getPath() + createTime + File.separator;
-        File uploadDirectory = new File(newPath);
-        if (uploadDirectory.exists()) {
-            if (!uploadDirectory.isDirectory()) {
-                uploadDirectory.delete();
-            }
-        } else {
-            uploadDirectory.mkdir();
-        }
+        String newPath = fileUploadProperties.getPath();
         try {
             String fileName = file.getOriginalFilename();
             //id与filename保持一直，删除文件
             String fileNameNew = UUID.randomUUID().toString().replace("-", "") + getFileType(fileName);
             String newFilePathName = newPath + fileNameNew;
-            String url = fileUploadProperties.getUrl() + fileNameNew;
+            String url = fileUploadProperties.getUrl() + "/" + fileNameNew;
             //创建输出文件对象
             File outFile = new File(newFilePathName);
             //拷贝文件到输出文件对象
             FileUtils.copyInputStreamToFile(file.getInputStream(), outFile);
+            // 将文件复制到编译后的目录中
+            Path sourcePath = Paths.get(newFilePathName);
+            Path targetPath = Paths.get("target/classes/static/images/pic/" + fileNameNew);
+            Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
+
             Map<String, String> resultMap = new HashMap<>();
             resultMap.put("src", url);
             return DataResult.success(resultMap);
@@ -192,26 +192,26 @@ public class CommodityController {
     public DataResult relgoodsimages(@RequestParam(value = "file", required = false) MultipartFile[] files) throws IOException {
         // 存储文件夹
         // 获取项目的资源文件路径
-        String uploadDirectoryPath = fileUploadProperties.getPath() + File.separator;
-        File uploadDirectory = new File(uploadDirectoryPath);
-        if (!uploadDirectory.exists()) {
-            uploadDirectory.mkdirs();
-        }
-
+        String newPath = fileUploadProperties.getPath();
         List<String> imageUrls = new ArrayList<>();
         for (MultipartFile file : files) {
             try {
                 String fileName = file.getOriginalFilename();
                 // 生成新的文件名
-                String fileExtension = getFileType(fileName);
-                String newFileName = UUID.randomUUID().toString().replace("-", "") + fileExtension;
-                String newFilePath = uploadDirectoryPath + newFileName;
-                String imageUrl = fileUploadProperties.getUrl() + newFileName;
+                String fileNameNew = UUID.randomUUID().toString().replace("-", "") + getFileType(fileName);
+                String newFilePathName = newPath + fileNameNew;
+                String url = fileUploadProperties.getUrl() + "/" + fileNameNew;
                 // 创建输出文件对象
-                File outFile = new File(newFilePath);
+                File outFile = new File(newFilePathName);
                 // 拷贝文件到输出文件对象
                 FileUtils.copyInputStreamToFile(file.getInputStream(), outFile);
-                imageUrls.add(imageUrl);
+
+                // 将文件复制到编译后的目录中
+                Path sourcePath = Paths.get(newFilePathName);
+                Path targetPath = Paths.get("target/classes/static/images/pic/" + fileNameNew);
+                Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
+
+                imageUrls.add(url);
             } catch (Exception e) {
                 throw new BusinessException("上传文件失败");
             }

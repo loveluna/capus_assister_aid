@@ -187,9 +187,9 @@ public class LoginController {
         String password=login.getPassword();
         String vercode=login.getVercode();
         UsernamePasswordToken token;
-        if(!ValidateCode.code.equalsIgnoreCase(vercode)){
-            return new ResultVo(false,StatusCode.ERROR,"请输入正确的验证码");
-        }
+//        if(!ValidateCode.code.equalsIgnoreCase(vercode)){
+//            return new ResultVo(false,StatusCode.ERROR,"请输入正确的验证码");
+//        }
         //判断输入的账号是否手机号
         if (!JustPhone.justPhone(account)) {
             //输入的是用户名
