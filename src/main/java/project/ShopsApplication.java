@@ -28,8 +28,14 @@ public class ShopsApplication {
                         "Application '{}' is running! Access URLs:\n\t" +
                         "Login: \thttp://{}:{}/login\n\t" +
                         "Doc: \thttp://{}:{}/doc.html\n" +
+                        "Druid:\thttp://{}:{}/druid/sql.html\n" +
+                        "会员登录:\thttp://{}:{}/admin\n" +
                         "----------------------------------------------------------",
                 env.getProperty("spring.application.name"),
+                InetAddress.getLocalHost().getHostAddress(),
+                env.getProperty("server.port"),
+                InetAddress.getLocalHost().getHostAddress(),
+                env.getProperty("server.port"),
                 InetAddress.getLocalHost().getHostAddress(),
                 env.getProperty("server.port"),
                 InetAddress.getLocalHost().getHostAddress(),
