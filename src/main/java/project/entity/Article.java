@@ -137,7 +137,7 @@ public class Article extends BaseEntity implements Serializable {
      * 文章简介
      */
     @TableField("article_desc")
-    private Boolean articleDesc;
+    private String articleDesc;
 
     /**
      * 文章类型

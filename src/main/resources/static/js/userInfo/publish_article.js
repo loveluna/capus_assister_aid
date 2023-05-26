@@ -3,7 +3,9 @@ var app = new Vue({
     data() {
         return {
             listimages: [],
-            mainimg: ""
+            mainimg: "",
+            videourl: "",
+            selectedType:'0'
         }
     },
     mounted: function () {
@@ -15,8 +17,18 @@ var app = new Vue({
         window.getlistimages = this.getlistimages;
         window.getmainimgurl = this.getmainimgurl;
         window.getvideourl = this.getvideourl;
+
     },
     methods: {
+        handleTypeChange() {
+            if (this.selectedType === '1') {
+                console.log("111111111111");
+                // 显示单选框组件
+            } else {
+                // 隐藏单选框组件
+                console.log("22222");
+            }
+        },
         showlistimages: function (imgurl) {
             var that = this;
             if (that.listimages.length !== 3) {
@@ -24,29 +36,29 @@ var app = new Vue({
                 object["imgsrc"] = imgurl;
                 that.listimages.push(object);//向vue数组中添加图片
             }
-        },getlistimages: function () {
+        }, getlistimages: function () {
             var that = this;
             return that.listimages;
-        },setmainimgurl: function (imgurl) {
+        }, setmainimgurl: function (imgurl) {
             var that = this;
             that.mainimg = imgurl;
-        },getmainimgurl: function () {
+        }, getmainimgurl: function () {
             var that = this;
             return that.mainimg;
-        },setvideourl: function (videosrc) {
+        }, setvideourl: function (videosrc) {
             var that = this;
             that.videourl = videosrc;
-        },getvideourl: function () {
+        }, getvideourl: function () {
             var that = this;
             return that.videourl;
-        },delimage: function (ids) {
+        }, delimage: function (ids) {
             var that = this;
             that.listimages.splice(ids, 1);//从vue数组中删除此图
-        },mouseOver: function (id) {
+        }, mouseOver: function (id) {
             $("#del" + id).show();
         }, mouseLeave: function (id) {
             $("#del" + id).hide();
-        },openimg: function (imgsrc) {
+        }, openimg: function (imgsrc) {
             var img = '<img src="' + imgsrc + '" style="width:100%;height:100%">';
             layer.open({
                 type: 1,
@@ -57,12 +69,29 @@ var app = new Vue({
                 shadeClose: true, //开启遮罩关闭
                 content: img
             });
+        },
+        changeType: function() {
+            // 获取类型选择下拉框的选中值
+            const typeValue = document.querySelector('select[name="articleType"]').value;
+
+            // 根据选中值更新组件的type属性
+            this.type = typeValue;
+
+            // 根据type属性的值更新categoryVisible和productImageVisible属性
+            if (typeValue === '0') {
+                this.categoryVisible = true;
+                this.productImageVisible = false;
+            } else {
+                this.categoryVisible = false;
+                this.productImageVisible = true;
+            }
         }
     }
 });
 
+let player = null;
 layui.use(['form', 'upload', 'element', 'layedit'], function () {
-    let upload = layui.upload;
+    var upload = layui.upload;
     let form = layui.form, layedit = layui.layedit;
     //创建一个题目编辑器
     let editIndex = layedit.build('newscontents', {
@@ -76,6 +105,7 @@ layui.use(['form', 'upload', 'element', 'layedit'], function () {
             , 'face'
         ]
     });
+
     upload.render({
         elem: '#test3'
         , url: basePath + '/relgoods/images'
@@ -123,7 +153,22 @@ layui.use(['form', 'upload', 'element', 'layedit'], function () {
             });
         }
     });
+
+    //监听select变化
+    form.on('select(type)', function(data){
+        if(data.value == 0) { //学习互助
+            form.render('select');  //刷新select选择框渲染
+            $("#category").show();
+            $("#otherimages_div").hide();
+        } else {
+            form.render('select');
+            $("#category").hide();
+            $("#otherimages_div").show();
+        }
+    });
+
     form.on('submit(submit)', function (data) {
+        var vuelistimages = getlistimages();
         if (data.field.topic.length > 200) {
             layer.msg('公告标题过长', {
                 time: 1000,
@@ -132,10 +177,18 @@ layui.use(['form', 'upload', 'element', 'layedit'], function () {
             });
             return false;
         }
+
+        $("#submit").addClass("layui-btn-disabled");
+        $("#submit").attr("disabled", true);
+        var rellistimgs = new Array();
+        for (var i = 0; i < vuelistimages.length; i++) {
+            rellistimgs[i] = vuelistimages[i].imgsrc;
+        }
+
         var object = new Object();
         object["topic"] = data.field.topic;
         object["articleContent"] = layedit.getContent(editIndex);
-        object["articleImage"] = vuemainimg;
+        object["articleImage"] = rellistimgs;
         object["articleDesc"] = data.field.articleDesc;
         object["category"] = data.field.category;
         object["articleType"] = data.field.articleType;

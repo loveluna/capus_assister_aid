@@ -1,10 +1,15 @@
 package project.service.impl;
 
+import com.alibaba.fastjson.TypeReference;
+import com.alibaba.fastjson.support.hsf.HSFJSONUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import org.springframework.stereotype.Service;
+import project.config.FileUploadProperties;
 import project.entity.Article;
 import project.entity.Comment;
 import project.entity.UserInfo;
@@ -35,6 +40,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     @Resource
     UserInfoService userInfoService;
+
+    @Resource
+    FileUploadProperties fileUploadProperties;
 
     @Override
     public Map<String, Object> getStudyModuleStatistics() {
@@ -165,6 +173,10 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         if (userInfo == null) {
             return false;
         }
+        Gson gson = new Gson();
+        List<String> urlList = Arrays.asList(gson.fromJson(article.getArticleImage(), String[].class));
+        String imgPath = fileUploadProperties.convertURLPath(urlList);
+        article.setArticleImage(imgPath);
         article.setCreateTime(new Date());
         article.setArticleId(KeyUtil.genUniqueKey());
         article.setUserId(userInfo.getUserid());

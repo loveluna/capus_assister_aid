@@ -1,8 +1,15 @@
 package project.config;
 
+import io.netty.util.internal.StringUtil;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * 文件上传参数配置类
@@ -47,4 +54,15 @@ public class FileUploadProperties {
         return accessUrl;
     }
 
+    public String convertURLPath(List<String> urlList){
+        String path;
+        Objects.requireNonNull(urlList, "urlList cannot be null");
+        String[] paths = this.path.split("/static");
+        if (paths != null && paths.length > 2) {
+            path = paths[1];
+            urlList = Optional.ofNullable(urlList).orElse(Collections.emptyList());
+            return urlList.stream().map(url -> url.replaceAll(this.url, path)).collect(Collectors.joining("#"));
+        }
+        return StringUtil.EMPTY_STRING;
+    }
 }

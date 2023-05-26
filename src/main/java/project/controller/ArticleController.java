@@ -3,6 +3,7 @@ package project.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
+import project.config.FileUploadProperties;
 import project.entity.Article;
 import project.entity.Comment;
 import project.entity.Report;
