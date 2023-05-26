@@ -471,7 +471,7 @@ public class CommodityController {
      */
     @ResponseBody
     @GetMapping("/user/changecommstatus/{commid}/{commstatus}")
-    @ApiOperation(value = "个人岁商品操作返回状态", httpMethod = "GET", response = ResultVo.class)
+    @ApiOperation(value = "个人随商品操作返回状态", httpMethod = "GET", response = ResultVo.class)
     public ResultVo ChangeCommstatus(@PathVariable("commid") String commid, @PathVariable("commstatus") Integer commstatus, HttpSession session) {
         if (commodityService.updateCommstatus(commid, commstatus)) {
             /**如果商品已售出*/

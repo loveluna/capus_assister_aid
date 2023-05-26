@@ -43,7 +43,7 @@ function lookallproduct(stuatus) {
             var data = obj.data;
             if (obj.event === 'xiangqing') {
                 window.open(basePath+"/product-detail/"+data.commid)
-            }else if (obj.event === 'bianji') {
+            }else if (obj.event === 'edit') {
                 layer.open({
                     type: 2,
                     title: '修改商品',
@@ -56,7 +56,7 @@ function lookallproduct(stuatus) {
                         location.reload();
                     }
                 });
-            }else if(obj.event === 'shanchu'){
+            }else if(obj.event === 'delete'){
                 layer.confirm('确认删除商品吗？', {
                     btn: ['确定','算了'], //按钮
                     title:"删除商品",
@@ -104,7 +104,7 @@ function lookallproduct(stuatus) {
                     });
                 }, function(){
                 });
-            }else if (obj.event === 'yishou') {
+            }else if (obj.event === 'sell') {
                 layer.confirm('确认设置该商品为已售吗？', {
                     btn: ['确定','算了'], //按钮
                     title:"售出商品",
