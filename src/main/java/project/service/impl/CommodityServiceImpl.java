@@ -61,6 +61,7 @@ public class CommodityServiceImpl extends ServiceImpl<CommodityMapper, Commodity
     public IPage<Commodity> queryAllCommodity(Integer commstatus, String userid, int page, int count) {
         QueryWrapper<Commodity> wrapper = new QueryWrapper<>();
         wrapper.eq(commstatus != null, "commstatus", commstatus) // 根据商品状态查询
+                .ne(commstatus == null, "commstatus", 2) // 根据用户ID查询
                 .eq(userid != null, "userid", userid) // 根据用户ID查询
                 .orderByDesc("updatetime"); // 按更新时间倒序排序
         return this.page(new Page<>(page, count), wrapper); // 分页查询
@@ -76,6 +77,7 @@ public class CommodityServiceImpl extends ServiceImpl<CommodityMapper, Commodity
     public int queryCommodityCount(Integer commstatus, String userid) {
         QueryWrapper<Commodity> wrapper= new QueryWrapper<>();
         wrapper.eq(commstatus != null, "commstatus", commstatus) // 根据商品状态查询
+                .ne(commstatus == null, "commstatus", 2) // 根据用户ID查询
                 .eq(userid != null, "userid", userid); // 根据用户ID查询
         return this.count(wrapper); // 统计符合条件的商品总数
     }

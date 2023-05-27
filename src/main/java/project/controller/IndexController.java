@@ -158,6 +158,16 @@ public class IndexController {
     }
 
     /**
+     * 用户文章列表
+     * */
+    @GetMapping("/user/article")
+    @ApiOperation(value = "跳转商品列表页面",httpMethod = "GET")
+    public String userPost(){
+        return "/user/product/post_ariticle.html";
+    }
+
+
+    /**
      * 通知消息
      * */
     @GetMapping("/user/message")

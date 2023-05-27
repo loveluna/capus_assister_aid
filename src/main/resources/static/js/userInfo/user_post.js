@@ -13,8 +13,8 @@ function lookallproduct(stuatus) {
     layui.use(['form', 'element', 'util', 'carousel', 'laypage', 'layer','table'], function () {
         var table = layui.table;
         table.render({
-            elem: '#product'
-            , url: basePath+'/user/commodity/'+stuatus
+            elem: '#post'
+            , url: basePath+'/article/list/'+stuatus
             , page: {
                 layout: ['limit', 'count', 'prev', 'page', 'next', 'skip']
                 , groups: 3
@@ -42,11 +42,11 @@ function lookallproduct(stuatus) {
         table.on('tool(test)', function (obj) {
             var data = obj.data;
             if (obj.event === 'detail') {
-                window.open(basePath+"/product-detail/"+data.commid)
+                window.open(basePath+"/article/collaboration/"+data.articleId)
             }else if (obj.event === 'edit') {
                 layer.open({
                     type: 2,
-                    title: '修改商品',
+                    title: '修改文章',
                     shadeClose: true,
                     shade: 0.8,
                     maxmin: true,
@@ -57,9 +57,9 @@ function lookallproduct(stuatus) {
                     }
                 });
             }else if(obj.event === 'delete'){
-                layer.confirm('确认删除商品吗？', {
+                layer.confirm('确认删除文章吗？', {
                     btn: ['确定','算了'], //按钮
-                    title:"删除商品",
+                    title:"删除文章",
                     offset:"50px"
                 }, function(){
                     layer.closeAll();
@@ -105,9 +105,9 @@ function lookallproduct(stuatus) {
                 }, function(){
                 });
             }else if (obj.event === 'sell') {
-                layer.confirm('确认设置该商品为已售吗？', {
+                layer.confirm('确认设置该文章为已售吗？', {
                     btn: ['确定','算了'], //按钮
-                    title:"售出商品",
+                    title:"售出文章",
                     offset:"50px"
                 }, function(){
                     layer.closeAll();

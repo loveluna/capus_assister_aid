@@ -1,13 +1,18 @@
 package project.controller.User;
 
 
-import org.apache.commons.lang3.concurrent.BasicThreadFactory;
+import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
+import net.jodah.expiringmap.ExpirationPolicy;
+import net.jodah.expiringmap.ExpiringMap;
+import org.springframework.beans.factory.annotation.Autowired;
+import project.entity.AliyunSmsProperties;
 import project.entity.Login;
 import project.entity.UserInfo;
 import project.entity.UserRole;
 import project.service.LoginService;
 import project.service.UserInfoService;
 import project.service.UserRoleService;
+import project.service.impl.AliyunSmsService;
 import project.vo.ResultVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -29,10 +34,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -47,10 +48,18 @@ public class LoginController {
     private UserInfoService userInfoService;
     @Resource
     private UserRoleService userRoleService;
+
+    @Resource
+    AliyunSmsService aliyunSmsService;
+
+    @Autowired
+    private AliyunSmsProperties properties;
+
     /**手机号和注册验证码map集合*/
-    private static Map<String, String> phonecodemap1 = new HashMap<>();
-    /**手机号和重置密码验证码map集合*/
-    private static Map<String, String> phonecodemap2 = new HashMap<>();
+    ExpiringMap<String, String> phoneCodeMap = ExpiringMap.builder()
+            .expirationPolicy(ExpirationPolicy.CREATED)
+            .expiration(5, TimeUnit.MINUTES)
+            .build();
     /**
      *图片验证码
      * */
@@ -91,37 +100,9 @@ public class LoginController {
         if (!StringUtils.isEmpty(userIsExist)){//用户账号已经存在
             return new ResultVo(false, StatusCode.ERROR,"该手机号已经注册过了");
         }
-        String code = GetCode.phonecode();
-        Integer result = new SmsUtil().SendMsg(mobilephone, code, type);//发送验证码
-        if(result == 1){//发送成功
-            phonecodemap1.put(mobilephone, code);//放入map集合进行对比
-
-/*
-            final Timer timer = new Timer();
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    phonecodemap1.remove(phoneNum);
-                    timer.cancel();
-                }
-            }, 5 * 60 * 1000);
-*/
-            //执行定时任务
-            ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1,
-                    new BasicThreadFactory.Builder().namingPattern("example-schedule-pool-%d").daemon(true).build());
-            executorService.scheduleAtFixedRate(new Runnable() {
-                @Override
-                public void run() {
-                    phonecodemap1.remove(mobilephone);
-                    ((ScheduledThreadPoolExecutor) executorService).remove(this::run);
-                }
-            },1 * 10 * 1000,1 * 10 * 1000, TimeUnit.HOURS);
-            return new ResultVo(true,StatusCode.SMS,"验证码发送成功");
-        }else if(result == 2){
-            return new ResultVo(false,StatusCode.ERROR,"请输入正确格式的手机号");
-        }
-        return new ResultVo(false,StatusCode.REMOTEERROR,"验证码发送失败");
+        return sendSMS(mobilephone);
     }
+
 
     /**注册
      * 1.前端传入用户名（username）、密码（password）、邮箱（email）、手机号（mobilephone）、验证码（vercode）
@@ -149,7 +130,7 @@ public class LoginController {
         if (!StringUtils.isEmpty(userNameIsExist)){//用户名已经存在
             return new ResultVo(false, StatusCode.ERROR,"用户名已存在，请换一个吧");
         }
-        String rel = phonecodemap1.get(mobilephone);
+        String rel = phoneCodeMap.get(mobilephone);
         if (StringUtils.isEmpty(rel)) {//验证码到期 或者 没发送短信验证码
             return new ResultVo(false,StatusCode.ERROR,"请重新获取验证码");
         }
@@ -248,40 +229,8 @@ public class LoginController {
         if (StringUtils.isEmpty(userIsExist)){//用户账号不存在
             return new ResultVo(false, StatusCode.LOGINERROR,"该用户不存在");
         }
-        String code = GetCode.phonecode();
-        Integer result = new SmsUtil().SendMsg(mobilephone, code, type);//发送验证码
-        if(result == 1) {//发送成功
-            phonecodemap2.put(mobilephone, code);//放入map集合进行对比
+        return sendSMS(mobilephone);
 
-/*
-            final Timer timer = new Timer();
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    phonecodemap2.remove(phoneNum);
-                    timer.cancel();
-                }
-            }, 5 * 60 * 1000);
-*/
-
-            //执行定时任务
-            ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1,
-                    new BasicThreadFactory.Builder().namingPattern("example-schedule-pool-%d").daemon(true).build());
-            executorService.scheduleAtFixedRate(new Runnable() {
-                @Override
-                public void run() {
-                    phonecodemap2.remove(mobilephone);
-                    ((ScheduledThreadPoolExecutor) executorService).remove(this::run);
-                }
-            },5 * 60 * 1000,5 * 60 * 1000, TimeUnit.HOURS);
-
-
-
-            return new ResultVo(true,StatusCode.SMS,"验证码发送成功");
-        }else if(result == 2){
-            return new ResultVo(false,StatusCode.ERROR,"请输入正确格式的手机号");
-        }
-        return new ResultVo(false,StatusCode.REMOTEERROR,"验证码发送失败");
     }
 
     /**重置密码
@@ -308,7 +257,7 @@ public class LoginController {
         if (StringUtils.isEmpty(userIsExist)){//用户账号不存在
             return new ResultVo(false, StatusCode.LOGINERROR,"该账号不存在");
         }
-        String rel = phonecodemap2.get(mobilephone);
+        String rel = phoneCodeMap.get(mobilephone);
         if (StringUtils.isEmpty(rel)) {//验证码到期 或者 没发送短信验证码
             return new ResultVo(false,StatusCode.ERROR,"请重新获取验证码");
         }
@@ -339,5 +288,28 @@ public class LoginController {
         return "redirect:/";
     }
 
+    private ResultVo sendSMS(String mobilephone) {
+        String code = GetCode.phonecode();
+        String templateParam = "{\"code\":\"" + code + "\"}";
+        SendSmsResponse smsResponse = aliyunSmsService.sendSms(mobilephone, templateParam);//发送验证码
+        if (smsResponse != null && "OK".equals(smsResponse.getCode())) {
+            phoneCodeMap.put(mobilephone, code);
+            return new ResultVo(true, StatusCode.SMS, "验证码发送成功");
+        } else if ("isv.SMS_TEST_NUMBER_LIMIT".equals(smsResponse.getCode())) {
+            // 向您的手机号发送申请加入白名单的短信
+            smsResponse = aliyunSmsService.sendSms(properties.getMaintainUserPhone(), templateParam);//发送验证码
+            if (smsResponse != null && "OK".equals(smsResponse.getCode())) {
+                phoneCodeMap.put(mobilephone, code);
+                String msg = String.format("请向将手机号 \"%s\"申请, 将\"%s\"加入短信服务白名单，以便正常接收验证码。验证已成功发送到 \"%s\"", properties.getMaintainUserPhone(), mobilephone, properties.getMaintainUserPhone());
+                return new ResultVo(true, StatusCode.SMS, msg);
+            } else {
+                phoneCodeMap.put(mobilephone, code);
+                String msg = String.format("请向将手机号 \"%s\"申请, 加入短信服务白名单，以便正常接收验证码。验证发送失败 测试验证是:\"%d\"", properties.getMaintainUserPhone(), code);
+                return new ResultVo(true, StatusCode.SMS, msg);
+            }
+        } else {
+            return new ResultVo(true, StatusCode.SMS, "验证码发送失败");
+        }
+    }
 
 }

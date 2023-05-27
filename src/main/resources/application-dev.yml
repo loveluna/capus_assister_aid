@@ -26,3 +26,12 @@ file:
   path: src/main/resources/static/images/pic/
   #path: /data/files/ #linux
   url: http://localhost:80/files
+aliyun:
+  sms:
+    regionId: cn-hangzhou
+    accessKeyId: LTAI5tSQhcmFqD6ELDxhXa2H
+    accessKeySecret: RNWONJUp7x6nfpf8GRxW7gSK3L2SS7
+    signName: 阿里云短信测试
+    templateCode: SMS_154950909
+    maintainUserPhone: 17629013170
+    #17691273242

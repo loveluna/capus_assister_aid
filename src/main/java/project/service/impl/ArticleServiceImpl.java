@@ -4,7 +4,9 @@ import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.support.hsf.HSFJSONUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 import project.config.FileUploadProperties;
 import project.entity.Article;
 import project.entity.Comment;
+import project.entity.Commodity;
 import project.entity.UserInfo;
 import project.exception.BusinessException;
 import project.mapper.ArticleMapper;
@@ -183,5 +186,29 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         article.setUserName(userInfo.getUsername());
         article.setUserImage(userInfo.getUimage());
         return articleMapper.insert(article) > 0;
+    }
+
+    @Override
+    public IPage<Article> queryAllArticles(Integer status, String userId, int page, int count) {
+        QueryWrapper<Article> wrapper = new QueryWrapper<>();
+        wrapper.eq(status != null, "status", status) // 根据文章状态查询
+                .ne(status == null, "status", 2) // 根据用户ID查询
+                .eq(userId != null, "userId", userId); // 根据用户ID查询
+        return this.page(new Page<>(page, count), wrapper); // 分页查询
+    }
+
+
+    @Override
+    public int queryArticleCount(Integer status, String userId) {
+        QueryWrapper<Article> wrapper= new QueryWrapper<>();
+        wrapper.eq(status != null, "status", status) // 根据文章状态查询
+                .ne(status == null, "status", 2) // 根据用户ID查询
+                .eq(userId != null, "userId", userId); // 根据用户ID查询
+        return this.count(wrapper); // 统计符合条件的文章总数
+    }
+
+    @Override
+    public boolean updateArticleStatus(String articleId, Integer status) {
+        return false;
     }
 }

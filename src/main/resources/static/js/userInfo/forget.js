@@ -187,13 +187,13 @@ function getphonecode() {
         success: function (data) {
             if (data.status == 200) {
                 layer.msg(data.message, {
-                    time: 1000,
+                    time: 20000,
                     icon: 1,
                     offset: '100px'
                 });
             } else {
                 layer.msg(data.message, {
-                    time: 1000,
+                    time: 20000,
                     icon: 2,
                     offset: '100px'
                 });

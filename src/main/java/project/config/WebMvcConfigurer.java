@@ -21,6 +21,8 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -134,7 +136,5 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport {
             DefaultServletHandlerConfigurer configurer) {
         configurer.enable();
     }
-
-
 }
 
