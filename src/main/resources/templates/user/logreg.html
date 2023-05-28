@@ -35,7 +35,12 @@
             <img th:src="@{/images}" title="看不清，请点击图片刷新" width="128px"
                  height="33px" id="image1" onclick="getcode(this)"/>
         </label>
-        <p class="forgot-pass"><a th:href="@{/forget}">忘记密码？</a></p>
+        <div class="forgot-pass" >
+            <a th:href="@{/forget}">忘记密码？</a>
+            <a class="bright-link" th:href="@{/admin}">
+                教师登录
+            </a>
+        </div>
         <button type="button" class="submit" id="submitlg" style="margin-top:10px" onclick="submitlogin()">登 录</button>
     </div>
     <div class="sub-cont">
@@ -50,7 +55,6 @@
             </div>
             <div class="img__btn">
                 <span class="m--up">注 册</span>
-                <span class="m--up">教师登录</span>
                 <span class="m--in">登 录</span>
             </div>
         </div>

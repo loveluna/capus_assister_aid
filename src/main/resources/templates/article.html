@@ -52,6 +52,14 @@
                                 <h1>{{ article.topic }}</h1>
                             </div>
                             <div v-html="article.articleContent"></div>
+
+                            <div class="photos">
+                                <div v-for="(image, index) in article.imgSrcs" :key="index" class="social-feed-box">
+                                    <a target="_blank" href="javascript:void(0)">
+                                        <img :src="image" class="img-responsive"/>
+                                    </a>
+                                </div>
+                            </div>
                             <hr>
                             <div class="row">
                                 <div class="col-lg-12">

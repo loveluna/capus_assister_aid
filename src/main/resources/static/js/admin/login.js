@@ -1,7 +1,7 @@
 //获取验证码js
 function getcode() {
     var b = Math.random();
-    document.getElementById("image1").src = basePath+"/images?d\x3d" + b
+    document.getElementById("image1").src = basePath + "/getVerify'?'" + b;
 }
 layui.config({
     base: '../../layuiadmin/' //静态资源所在路径
@@ -40,6 +40,7 @@ layui.config({
                         icon: 5,
                         offset: '100px'
                     });
+                    $("#image1").click();
                     $("#submitlg").removeClass("layui-btn-disabled");
                     $("#submitlg").attr("disabled", false);
                 }

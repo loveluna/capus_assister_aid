@@ -7,7 +7,7 @@
         id, table_name, menu_name, pid, gen_time
     </sql>
     <!-- 获取列表 -->
-    <select id="selectAllTables" resultType="project.entity.SysGenerator">
+    <select id="selectAllTables" resultType="cn.edu.xsyu.campus.project.entity.SysGenerator">
 
 
         SELECT

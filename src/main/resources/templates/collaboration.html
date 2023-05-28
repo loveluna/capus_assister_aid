@@ -50,7 +50,7 @@
                             <strong>{{ item.userName }}</strong>
                             <span class="text-muted"><i class="fa fa-clock-o"></i> {{ item.createTime | changeTime }}</span>
                         </div>
-                        <p>{{ item.articleContent }}</p>
+                        <div v-html="item.articleContent"></div>
                         <div class="row">
                             <div class="col-md-6">
                                 <h5>标签:</h5>

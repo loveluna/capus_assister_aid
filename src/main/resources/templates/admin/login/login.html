@@ -38,8 +38,8 @@
                     </div>
                     <div class="layui-col-xs5">
                         <div style="margin-left: 10px;">
-                            <img th:src="@{/images}" title="看不清，请点击图片刷新" width="128px"
-                                 height="36px" id="image1" onclick="getcode(this)"/>
+                            <img th:src="@{/getVerify}" title="看不清，请点击图片刷新" width="128px"
+                                 height="36px" id="image1" onClick="this.src=this.src+'?'+Math.random();"/>
                         </div>
                     </div>
                 </div>

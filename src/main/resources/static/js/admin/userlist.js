@@ -43,9 +43,7 @@ function lookalluser(stuatus) {
         //监听行工具事件
         table.on('tool(test)', function (obj) {
             var data = obj.data;
-            if (obj.event === 'gerenzhuye') {
-                //window.open(basePath+"/product-detail/"+data.commid)
-            }else if(obj.event === 'fengjin'){
+            if(obj.event === 'disable'){
                 layer.confirm('确认将用户封号吗？', {
                     btn: ['确定','算了'], //按钮
                     title:"用户封号",
@@ -93,7 +91,7 @@ function lookalluser(stuatus) {
                     });
                 }, function(){
                 });
-            }else if (obj.event === 'jiefeng') {
+            }else if (obj.event === 'release') {
                 layer.confirm('确认将用户解封吗？', {
                     btn: ['确定','算了'], //按钮
                     title:"解封用户",

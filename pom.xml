@@ -8,10 +8,10 @@
         <version>2.1.6.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>capus_assister_aid</groupId>
-    <artifactId>shops</artifactId>
+    <groupId>capus_assister</groupId>
+    <artifactId>capus_assister</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>capus_assister_aid</name>
+    <name>capus_assister</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>

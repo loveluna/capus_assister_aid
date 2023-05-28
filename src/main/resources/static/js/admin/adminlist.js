@@ -34,9 +34,7 @@ layui.use(['form', 'element', 'util', 'carousel', 'laypage', 'layer','table'], f
     //监听行工具事件
     table.on('tool(test)', function (obj) {
         var data = obj.data;
-        if (obj.event === 'gerenzhuye') {
-            //window.open(basePath+"/product-detail/"+data.commid)
-        }else if(obj.event === 'setuser'){
+      if(obj.event === 'setuser'){
             layer.confirm('确认设置为成员吗？', {
                 btn: ['确定','算了'], //按钮
                 title:"用户封号",

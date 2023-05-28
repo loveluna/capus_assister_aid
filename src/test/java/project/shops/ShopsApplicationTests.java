@@ -1,5 +1,11 @@
 package project.shops;
 
+import cn.edu.xsyu.campus.project.entity.Comment;
+import cn.edu.xsyu.campus.project.entity.Commodity;
+import cn.edu.xsyu.campus.project.entity.Reply;
+import cn.edu.xsyu.campus.project.entity.UserInfo;
+import cn.edu.xsyu.campus.project.service.*;
+import cn.edu.xsyu.campus.project.util.PageLength;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,12 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
-import project.entity.Comment;
-import project.entity.Commodity;
-import project.entity.Reply;
-import project.entity.UserInfo;
-import project.service.*;
-import project.util.PageLength;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
