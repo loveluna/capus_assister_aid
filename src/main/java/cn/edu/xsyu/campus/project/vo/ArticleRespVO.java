@@ -1,6 +1,7 @@
 package cn.edu.xsyu.campus.project.vo;
 
 import cn.edu.xsyu.campus.project.entity.Article;
+import cn.edu.xsyu.campus.project.entity.Report;
 import cn.edu.xsyu.campus.project.entity.UserInfo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -17,4 +18,7 @@ public class ArticleRespVO {
 
     @ApiModelProperty(value = "文章")
     private List<Article> articles;
+
+    @ApiModelProperty(value = "举报信息")
+    private Report report;
 }

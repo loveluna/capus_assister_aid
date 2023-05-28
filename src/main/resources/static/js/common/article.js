@@ -29,6 +29,11 @@ var app = new Vue({
                 });
             }
 
+        }, reportArticle1() {
+            const userId = this.article.userId;
+            const userName = this.article.userName;
+            const articleId = this.article.articleId;
+            reportArticle(userId, userName, articleId);
         }
     },
     filters: {
@@ -38,3 +43,35 @@ var app = new Vue({
         }
     }
 });
+
+// 提交举报请求
+function reportArticleSubmit() {
+    var uid = $('#userId').val();
+    var articleId = $('#articleId').val();
+    var reason = $('#myModal5 textarea').val();
+    if (reason.length == 0) {
+        layer.tips("请输入举报内容", '#myModal5 textarea', {
+            tips: [1, "#0FA6D8"],
+            tipsMore: !1,
+            time: 1300
+        });
+        $("#myModal5 textarea").focus();
+        return;
+    }
+
+    var object = new Object();
+    object["reporterId"] = uid;
+    object["reportedId"] = articleId;
+    object["reason"] = reason;
+    // TODO: 将举报内容提交到服务器进行处理
+    CoreUtil.sendPost("/article/report", object, res => {
+        $('#myModal5').modal('hide');
+        layer.msg(res.msg)
+    });
+}
+function reportArticle(userId, userName, articleId) {
+    $('#userName').val(userName);
+    $('#userId').val(userId);
+    $('#articleId').val(articleId);
+    $('#myModal5 textarea').val('');
+}

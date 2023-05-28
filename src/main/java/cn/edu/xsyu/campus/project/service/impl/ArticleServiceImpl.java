@@ -3,11 +3,13 @@ package cn.edu.xsyu.campus.project.service.impl;
 import cn.edu.xsyu.campus.project.config.FileUploadProperties;
 import cn.edu.xsyu.campus.project.entity.Article;
 import cn.edu.xsyu.campus.project.entity.Comment;
+import cn.edu.xsyu.campus.project.entity.Report;
 import cn.edu.xsyu.campus.project.entity.UserInfo;
 import cn.edu.xsyu.campus.project.exception.BusinessException;
 import cn.edu.xsyu.campus.project.mapper.ArticleMapper;
 import cn.edu.xsyu.campus.project.service.ArticleService;
 import cn.edu.xsyu.campus.project.service.CommentService;
+import cn.edu.xsyu.campus.project.service.ReportService;
 import cn.edu.xsyu.campus.project.service.UserInfoService;
 import cn.edu.xsyu.campus.project.util.KeyUtil;
 import cn.edu.xsyu.campus.project.vo.ArticleRespVO;
@@ -43,12 +45,15 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     @Resource
     FileUploadProperties fileUploadProperties;
 
+    @Resource
+    private ReportService reportService;
+
     @Override
     public Map<String, Object> getStudyModuleStatistics() {
         // 构建查询条件
         QueryWrapper<Article> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("article_type", STUDY_MODULE)
-                .eq("status", 0)
+                .eq("status", 1)
                 .in("category", Arrays.asList(QUESTIONS.getValue(),
                         TECHNICAL_SHARING.getValue(),
                         EVENTS.getValue()));
@@ -88,7 +93,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         // 构建查询条件
         QueryWrapper<Article> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("article_type", STUDY_MODULE)
-                .eq("status", 0)
+                .eq("status", 1)
                 .eq("category",OTHERS.getValue());
 
         // 查询符合条件的文章
@@ -99,7 +104,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     public List<Article> getStudySectionByTopic(Integer type) {
         QueryWrapper<Article> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("article_type", STUDY_MODULE)
-                .eq("status", 0)
+                .eq("status", 1)
                 .eq("category", type);
         return articleMapper.selectList(queryWrapper);
     }
@@ -144,7 +149,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         // 构建查询条件
         QueryWrapper<Article> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("article_type", LIFE_MODULE)
-                .eq("status", 0)
+                .eq("status", 1)
                 .in("category", Arrays.asList(TEXT_MODULE.getValue(),
                         IMAGE_MODULE.getValue()));
 
@@ -179,6 +184,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         article.setCreateTime(new Date());
         article.setArticleId(KeyUtil.genUniqueKey());
         article.setUserId(userInfo.getUserid());
+        article.setStatus(3);
         article.setUserName(userInfo.getUsername());
         article.setUserImage(userInfo.getUimage());
         return articleMapper.insert(article) > 0;
@@ -205,6 +211,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     @Override
     public boolean updateArticleStatus(String articleId, Integer status) {
-        return articleMapper.update(null, Wrappers.<Article>lambdaUpdate().set(Article::getStatus, status).eq(Article::getArticleId, articleId)) > 0;
+        boolean updateStatus = articleMapper.update(null, Wrappers.<Article>lambdaUpdate().set(Article::getStatus, status).eq(Article::getArticleId, articleId)) > 0;
+        boolean updateReport = reportService.update(Wrappers.<Report>lambdaUpdate().set(Report::getStatus, status).eq(Report::getReportedId, articleId));
+        return updateStatus && updateReport;
     }
 }

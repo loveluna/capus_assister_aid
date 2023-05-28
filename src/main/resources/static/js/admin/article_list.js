@@ -14,7 +14,7 @@ function lookallproduct(stuatus) {
         var table = layui.table;
         table.render({
             elem: '#product'
-            , url: basePath+'/admin/commodity/'+stuatus
+            , url: basePath+'/article/list/'+stuatus
             , page: {
                 layout: ['limit', 'count', 'prev', 'page', 'next', 'skip']
                 , groups: 3
@@ -22,9 +22,11 @@ function lookallproduct(stuatus) {
                 , limit: 20
             }, cols: [[
                 {field: 'qid', title: 'ID',width:80, align:'center'}
-                , {field: 'commname', title: '名称', width: 300, align:'center'}
-                , {field: 'category', title: '类别', width: 100, align:'center'}
-                , {field: 'commdesc', title: '描述', width: 700, align:'center'}
+                , {field: 'topic', title: '名称', width: 300, align:'center'}
+                , {field: 'articleType', title: '类别', width: 100, align:'center',templet: function(d){
+                        return d.articleType === "0" ? '学习互助' : '生活互助';
+                    }}
+                , {field: 'articleDesc', title: '描述', width: 700, align:'center'}
                 , {field: 'updatetime', title: '时间', width: 160,sort: true, align:'center'}
                 , {fixed: 'right', title: '操作', toolbar: '#barDemo', width:200, align:'center'}
             ]], done: function (res, curr, count) {
@@ -42,19 +44,19 @@ function lookallproduct(stuatus) {
         table.on('tool(test)', function (obj) {
             var data = obj.data;
             if (obj.event === 'detail') {
-                window.open(basePath+"/product-detail/"+data.commid)
+                window.open(basePath+"/article?articleId="+data.articleId)
             }else if(obj.event === 'violation'){
-                layer.confirm('确认商品违规吗？', {
+                layer.confirm('确认文章违规吗？', {
                     btn: ['确定','算了'], //按钮
-                    title:"违规商品",
+                    title:"违规文章",
                     offset:"50px"
                 }, function(){
                     layer.closeAll();
                     $.ajax({
-                        url: basePath+'/admin/changecommstatus/'+data.commid+"/0",
+                        url: basePath+'/article/updateStatus/'+data.articleId+"/0",
                         data: "",
                         contentType: "application/json;charset=UTF-8", //发送数据的格式
-                        type: "put",
+                        type: "get",
                         dataType: "json", //回调
                         beforeSend: function () {
                             layer.load(1, { //icon支持传入0-2
@@ -92,9 +94,9 @@ function lookallproduct(stuatus) {
                 }, function(){
                 });
             }else if (obj.event === 'shenhe') {
-                layer.confirm('确认该商品通过审核吗？', {
+                layer.confirm('确认该文章通过审核吗？', {
                     btn: ['确定','算了'], //按钮
-                    title:"审核商品",
+                    title:"审核文章",
                     offset:"50px"
                 }, function(){
                     layer.closeAll();
@@ -143,4 +145,4 @@ function lookallproduct(stuatus) {
         });
     });
 }
-lookallproduct(100);
+lookallproduct(200);

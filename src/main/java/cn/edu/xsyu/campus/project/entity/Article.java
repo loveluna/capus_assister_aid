@@ -170,6 +170,9 @@ public class Article extends BaseEntity implements Serializable {
         return DateUtils.formatTime(this.createTime.getTime());
     }
 
+    @TableField(exist = false)
+    private Report report;
+
     public enum Category {
         QUESTIONS(1),
         TECHNICAL_SHARING(2),

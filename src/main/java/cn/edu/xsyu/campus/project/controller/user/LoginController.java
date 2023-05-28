@@ -159,7 +159,7 @@ public class LoginController {
             login.setId(KeyUtil.genUniqueKey()).setUserid(userid).setMobilephone(mobilephone).setPassword(passwords);
             loginService.loginAdd(login);
             //新注册用户存入默认头像、存入默认签名
-            userInfo.setUserid(userid).setPassword(passwords).setUimage("/static/pic/d1d66c3ea71044a9b938b00859ca94df.jpg").
+            userInfo.setUserid(userid).setPassword(passwords).setUimage("/pic/d1d66c3ea71044a9b938b00859ca94df.jpg").
                     setSign("如此清秋何吝酒，这般明月不须钱").setStatus("offline");
             if (userInfoService.saveUser(userInfo)){
                 /**注册成功后存入session*/
@@ -186,9 +186,9 @@ public class LoginController {
         String password=login.getPassword();
         String vercode=login.getVercode();
         UsernamePasswordToken token;
-//        if(!ValidateCode.code.equalsIgnoreCase(vercode)){
-//            return new ResultVo(false,StatusCode.ERROR,"请输入正确的验证码");
-//        }
+        if(!ValidateCode.code.equalsIgnoreCase(vercode)){
+            return new ResultVo(false,StatusCode.ERROR,"请输入正确的验证码");
+        }
         //判断输入的账号是否手机号
         if (!JustPhone.justPhone(account)) {
             //输入的是用户名

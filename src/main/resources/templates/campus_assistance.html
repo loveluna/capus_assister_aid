@@ -249,6 +249,16 @@
                 var uid = $('#userId').val();
                 var articleId = $('#articleId').val();
                 var reason = $('#myModal5 textarea').val();
+                if (reason.length == 0) {
+                    layer.tips("请输入举报内容", '#myModal5 textarea', {
+                        tips: [1, "#0FA6D8"],
+                        tipsMore: !1,
+                        time: 1300
+                    });
+                    $("#myModal5 textarea").focus();
+                    return;
+                }
+
                 var object = new Object();
                 object["reporterId"] = uid;
                 object["reportedId"] = articleId;

@@ -2,6 +2,7 @@ package cn.edu.xsyu.campus.project.controller;
 
 import cn.edu.xsyu.campus.project.entity.Article;
 import cn.edu.xsyu.campus.project.entity.Comment;
+import cn.edu.xsyu.campus.project.entity.Commodity;
 import cn.edu.xsyu.campus.project.entity.Report;
 import cn.edu.xsyu.campus.project.service.ArticleService;
 import cn.edu.xsyu.campus.project.service.CommentService;
@@ -94,7 +95,7 @@ public class ArticleController {
     @GetMapping("/list/{articleStatus}")
     @ResponseBody
     @ApiOperation(value = "分页展示个人各类文章信息", httpMethod = "GET", response = LayuiPageVo.class)
-    public LayuiPageVo userCommodity(@PathVariable("articleStatus") Integer articleStatus, int limit, int page, HttpSession session) {
+    public LayuiPageVo userArticle(@PathVariable("articleStatus") Integer articleStatus, int limit, int page, HttpSession session) {
         String userId = (String) session.getAttribute("userid");
         //如果未登录，给一个假id
         if (StringUtils.isEmpty(userId)) {
@@ -106,6 +107,10 @@ public class ArticleController {
             IPage<Article> articleIPage = articleService.queryAllArticles(null, userId, (page - 1) * limit, limit);
             articles = articleIPage.getRecords();
             dataNumber = articleService.queryArticleCount(null, userId);
+        } else if (articleStatus == 200) {
+            IPage<Article> articleIPage = articleService.queryAllArticles(null, null, (page - 1) * limit, limit);
+            articles = articleIPage.getRecords();
+            dataNumber = articleService.queryArticleCount(null, null);
         } else {
             IPage<Article> articleIPage = articleService.queryAllArticles(articleStatus, userId, (page - 1) * limit, limit);
             articles = articleIPage.getRecords();
@@ -127,6 +132,21 @@ public class ArticleController {
             return new ResultVo(true, StatusCode.OK, "操作成功");
         }
         return new ResultVo(false, StatusCode.ERROR, "操作失败");
+    }
+
+    @GetMapping("/reports/{status}")
+    @ResponseBody
+    @ApiOperation(value = "分页举报信息", httpMethod = "GET", response = LayuiPageVo.class)
+    public LayuiPageVo userReport(@PathVariable("status") Integer status, int limit, int page) {
+        if (status == 100) {
+            List<Article> articles = reportService.queryAllCommodity(null, null, page, limit);
+            Integer dataNumber = reportService.queryCommodityCount(null, null);
+            return new LayuiPageVo("", 0, dataNumber, articles);
+        } else {
+            List<Article> articles = reportService.queryAllCommodity(status, null, page, limit);
+            Integer dataNumber = reportService.queryCommodityCount(status, null);
+            return new LayuiPageVo("", 0, dataNumber, articles);
+        }
     }
 
 }

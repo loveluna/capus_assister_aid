@@ -268,7 +268,7 @@ function submitregister() {
         success: function (data) {
             if (data.status == 201) {
                 layer.msg(data.message, {
-                    time: 1000,
+                    time: 10000,
                     icon: 2,
                     offset: '100px'
                 });

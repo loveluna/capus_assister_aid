@@ -156,7 +156,7 @@ public class AdminController {
     @PutMapping("/admin/set/administrator/{userId}/{roleId}")
     @ResponseBody
     @ApiOperation(value = "设置为管理员或普通成员", httpMethod = "PUT", response = ResultVo.class)
-    public ResultVo setadmin(@PathVariable("userId") String userId, @PathVariable("roleId") Integer roleId) {
+    public ResultVo setAdmin(@PathVariable("userId") String userId, @PathVariable("roleId") Integer roleId) {
         if (roleId == 2) {
             if (loginService.update(null, Wrappers.<Login>lambdaUpdate().set(Login::getRoleid, roleId).eq(Login::getUserid, userId))) {
                 userRoleService.updateUserRole(new UserRole().setUserid(userId).setRoleid(2).setIdentity("网站管理员"));
@@ -188,7 +188,7 @@ public class AdminController {
     @PutMapping("/admin/user/forbid/{userid}/{userstatus}")
     @ResponseBody
     @ApiOperation(value = "用户封号解封", httpMethod = "PUT", response = ResultVo.class)
-    public ResultVo adminuserlist(@PathVariable("userid") String userid, @PathVariable("userstatus") Integer userstatus) {
+    public ResultVo adminUserlist(@PathVariable("userid") String userid, @PathVariable("userstatus") Integer userstatus) {
         if (userstatus == 0) {
             boolean updateUserInfo = userInfoService.updateUserInfo(new UserInfo().setUserid(userid).setUserstatus(userstatus));
             if (loginService.updateById(new Login().setUserid(userid).setUserstatus(userstatus)) && updateUserInfo) {
@@ -217,8 +217,25 @@ public class AdminController {
      * 管理员商品列表
      */
     @GetMapping("/admin/product")
-    public String adminproduct() {
+    public String adminProduct() {
         return "/admin/product/productlist";
+    }
+
+
+    /**
+     * 管理员文章列表
+     */
+    @GetMapping("/admin/article")
+    public String adminArticle() {
+        return "/admin/product/article_list";
+    }
+
+    /**
+     * 管理员商品列表
+     */
+    @GetMapping("/admin/report")
+    public String report() {
+        return "/admin/product/report_list";
     }
 
     /**
